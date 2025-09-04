@@ -114,7 +114,7 @@ export default function QuizApp() {
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
 
     if (isLastQuestion) {
-      finishQuiz(newScore);
+       finishQuiz(newScore);
     }
   };
 

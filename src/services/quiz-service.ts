@@ -26,7 +26,7 @@ export type SaveQuizResultInput = Omit<QuizResult, 'id' | 'createdAt'>;
 
 export async function saveQuizResult(
   result: SaveQuizResultInput
-): Promise<Omit<QuizResult, 'createdAt'> & { createdAt: string }> {
+): Promise<string> {
   try {
     const docData = {
       ...result,
@@ -34,11 +34,7 @@ export async function saveQuizResult(
     };
     const docRef = await addDoc(collection(db, 'quizResults'), docData);
 
-    return {
-      ...result,
-      id: docRef.id,
-      createdAt: new Date().toISOString(),
-    };
+    return docRef.id;
   } catch (error) {
     console.error('Error saving quiz result:', error);
     throw new Error('Failed to save quiz result.');
@@ -63,7 +59,7 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
       history.push({
         id: doc.id,
         ...data,
-        createdAt: (data.createdAt as Timestamp).toDate(),
+        createdAt: data.createdAt,
       } as QuizResult);
     });
     return history;

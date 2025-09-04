@@ -27,7 +27,13 @@ export default function HistoryPage() {
     if (user) {
       setLoading(true);
       getQuizHistory(user.uid)
-        .then(setHistory)
+        .then((results) => {
+            const formattedHistory = results.map(r => ({
+                ...r,
+                createdAt: r.createdAt instanceof Timestamp ? r.createdAt.toDate() : new Date(),
+            }));
+            setHistory(formattedHistory as any);
+        })
         .finally(() => setLoading(false));
     } else if (!authLoading) {
       setLoading(false);
@@ -126,7 +132,7 @@ export default function HistoryPage() {
                             </div>
                           </TableCell>
                           <TableCell className="hidden md:table-cell text-right">
-                            {format(result.createdAt instanceof Timestamp ? result.createdAt.toDate() : new Date(result.createdAt), 'PPp')}
+                            {format(result.createdAt, 'PPp')}
                           </TableCell>
                         </TableRow>
                       );
