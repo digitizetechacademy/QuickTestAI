@@ -212,7 +212,7 @@ export default function QuizApp() {
   const renderQuiz = () => {
     if (!quizData) return null;
     const currentQuestion = quizData.questions[currentQuestionIndex];
-    const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
+    const progress = ((currentQuestionIndex + 1) / quizData.questions.length) * 100;
 
     const getOptionStyle = (index: number) => {
         if (!isAnswered) {
