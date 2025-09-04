@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookOpen, BrainCircuit, CheckCircle, Home, Loader2, MoveRight, Repeat, XCircle } from 'lucide-react';
+import { Award, BookOpen, BrainCircuit, CheckCircle, Diamond, Home, Loader2, Medal, MoveRight, Repeat, Trophy, XCircle } from 'lucide-react';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
 import { saveQuizResult } from '@/services/quiz-service';
@@ -26,6 +26,12 @@ const formSchema = z.object({
   topic: z.string().min(3, 'Topic must be at least 3 characters long.').max(50, 'Topic must be 50 characters or less.'),
   difficulty: z.enum(['Easy', 'Medium', 'Hard']),
 });
+
+type BadgeType = {
+    name: 'Beginner' | 'Learner' | 'Achiever' | 'Champion';
+    icon: React.ElementType;
+    color: string;
+};
 
 export default function QuizApp() {
   const [appState, setAppState] = useState<AppState>('topic');
@@ -81,17 +87,16 @@ export default function QuizApp() {
       finalScore = score + 1;
       setScore(finalScore);
     }
-
+    
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
     if (isLastQuestion) {
-      await handleSaveResult(finalScore);
-      setAppState('results');
+        await handleSaveResult(finalScore);
     } else {
-      setTimeout(() => {
-        setIsAnswered(false);
-        setSelectedAnswer(null);
-        setCurrentQuestionIndex((prev) => prev + 1);
-      }, 1000);
+        setTimeout(() => {
+            setIsAnswered(false);
+            setSelectedAnswer(null);
+            setCurrentQuestionIndex((prev) => prev + 1);
+        }, 1000);
     }
   };
   
@@ -110,6 +115,7 @@ export default function QuizApp() {
                 description: 'Your quiz result has been saved to your history.',
             });
             router.refresh();
+            viewResults();
         } catch (error) {
             console.error('Save Error:', error);
             toast({
@@ -118,6 +124,8 @@ export default function QuizApp() {
                 variant: 'destructive',
             });
         }
+    } else {
+        viewResults();
     }
   }
 
@@ -141,6 +149,10 @@ export default function QuizApp() {
     setQuizParams({ topic: '', difficulty: 'Medium' });
     setAppState('topic');
   }
+
+  const viewResults = () => {
+    setAppState('results');
+  };
 
   const renderTopicSelector = () => (
     <Card className="w-full max-w-lg shadow-lg animate-in fade-in duration-500">
@@ -298,15 +310,20 @@ export default function QuizApp() {
   const renderResults = () => {
     const percentage = Math.round((score / quizData!.questions.length) * 100);
     let feedback = { title: "", description: "" };
+    let badge: BadgeType;
 
-    if (percentage === 100) {
-        feedback = { title: "Perfect Score!", description: "Incredible! You're an expert on this topic." };
-    } else if (percentage >= 80) {
-        feedback = { title: "Excellent Work!", description: "You have a strong understanding of the material." };
-    } else if (percentage >= 50) {
-        feedback = { title: "Good Effort!", description: "You're on the right track. A little review could help." };
+    if (score >= 9) {
+      badge = { name: 'Champion', icon: Diamond, color: 'text-blue-400' };
+      feedback = { title: "Champion!", description: "Incredible! You're an expert on this topic." };
+    } else if (score >= 7) {
+      badge = { name: 'Achiever', icon: Trophy, color: 'text-yellow-500' };
+      feedback = { title: "Excellent Work!", description: "You have a strong understanding of the material." };
+    } else if (score >= 4) {
+      badge = { name: 'Learner', icon: Medal, color: 'text-gray-400' };
+      feedback = { title: "Good Effort!", description: "You're on the right track. A little review could help." };
     } else {
-        feedback = { title: "Keep Studying!", description: "Don't be discouraged. Learning is a journey." };
+      badge = { name: 'Beginner', icon: Award, color: 'text-yellow-700' };
+      feedback = { title: "Keep Studying!", description: "Don't be discouraged. Learning is a journey." };
     }
 
     return (
@@ -315,7 +332,11 @@ export default function QuizApp() {
                 <CardTitle className="text-2xl md:text-3xl font-bold">{feedback.title}</CardTitle>
                 <CardDescription>{feedback.description}</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col items-center gap-4">
+            <CardContent className="flex flex-col items-center gap-6">
+                <div className={cn("flex items-center gap-3 p-3 rounded-lg bg-secondary", badge.color)}>
+                    <badge.icon className="w-8 h-8" />
+                    <span className="text-xl font-semibold">{badge.name}</span>
+                </div>
                  <div className="relative flex items-center justify-center w-32 h-32 md:w-40 md:h-40">
                     <svg className="w-full h-full transform -rotate-90" viewBox="0 0 130 130">
                         <circle className="text-secondary" strokeWidth="10" stroke="currentColor" fill="transparent" r="58" cx="65" cy="65" />
