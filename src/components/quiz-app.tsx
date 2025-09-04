@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { Award, BookOpen, BrainCircuit, CheckCircle, Diamond, Home, Loader2, Medal, MoveRight, Repeat, Trophy, XCircle } from 'lucide-react';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
-import { saveQuizResult, type ClientQuizResult } from '@/services/quiz-service';
+import { saveQuizResult } from '@/services/quiz-service';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -82,23 +82,24 @@ export default function QuizApp() {
     setIsAnswered(true);
     const correct = selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex;
     
-    let finalScore = score;
+    let currentScore = score;
     if (correct) {
-      finalScore = score + 1;
-      setScore(finalScore);
+      currentScore = score + 1;
+      setScore(currentScore);
     }
     
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
 
-    if (isLastQuestion) {
-        await handleSaveResult(finalScore);
-    } else {
-        setTimeout(() => {
-            setIsAnswered(false);
-            setSelectedAnswer(null);
-            setCurrentQuestionIndex((prev) => prev + 1);
-        }, 1000);
-    }
+    setTimeout(async () => {
+      if (isLastQuestion) {
+        await handleSaveResult(currentScore);
+        viewResults();
+      } else {
+        setIsAnswered(false);
+        setSelectedAnswer(null);
+        setCurrentQuestionIndex((prev) => prev + 1);
+      }
+    }, 1000);
   };
   
   const handleSaveResult = async (finalScore: number) => {
@@ -125,7 +126,6 @@ export default function QuizApp() {
             });
         }
     }
-    viewResults();
   }
 
   const resetQuizState = () => {
@@ -296,7 +296,7 @@ export default function QuizApp() {
                     </div>
                 </div>
             )}
-            <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null || (isAnswered && !isLastQuestion)}>
+            <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null || isAnswered}>
                 {isAnswered ? (isLastQuestion ? 'View Results' : 'Next Question') : 'Submit Answer'}
                  {isAnswered && !isLastQuestion && <MoveRight className="ml-2" />}
             </Button>
