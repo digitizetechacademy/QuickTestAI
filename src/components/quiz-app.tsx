@@ -307,7 +307,8 @@ export default function QuizApp() {
   };
   
   const renderResults = () => {
-    const percentage = Math.round((score / quizData!.questions.length) * 100);
+    if (!quizData) return null;
+    const percentage = Math.round((score / quizData.questions.length) * 100);
     let feedback = { title: "", description: "" };
     let badge: BadgeType;
 
@@ -352,7 +353,7 @@ export default function QuizApp() {
                           cy="65"
                         />
                     </svg>
-                    <span className="absolute text-3xl md:text-4xl font-bold">{score}/{quizData!.questions.length}</span>
+                    <span className="absolute text-3xl md:text-4xl font-bold">{score}/{quizData.questions.length}</span>
                 </div>
                 <p className="text-base md:text-lg">You scored {percentage}% on the "{quizParams.topic}" ({quizParams.difficulty}) quiz.</p>
             </CardContent>

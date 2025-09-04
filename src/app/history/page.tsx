@@ -14,15 +14,10 @@ import { cn } from '@/lib/utils';
 import MainLayout from '@/components/main-layout';
 import SplashScreen from '@/components/splash-screen';
 import LoginPage from '@/components/login-page';
-import { Timestamp } from 'firebase/firestore';
-
-interface ClientQuizResult extends Omit<QuizResult, 'createdAt'> {
-    createdAt: string; 
-}
 
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
-  const [history, setHistory] = useState<ClientQuizResult[]>([]);
+  const [history, setHistory] = useState<QuizResult[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,13 +26,7 @@ export default function HistoryPage() {
         setLoading(true);
         try {
           const results = await getQuizHistory(user.uid);
-          const formattedHistory = results.map(r => ({
-            ...r,
-            createdAt: r.createdAt instanceof Timestamp 
-              ? r.createdAt.toDate().toISOString()
-              : new Date(r.createdAt as any).toISOString(),
-          }));
-          setHistory(formattedHistory);
+          setHistory(results);
         } catch (error) {
           console.error("Failed to fetch quiz history:", error);
         } finally {

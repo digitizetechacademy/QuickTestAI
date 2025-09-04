@@ -1,4 +1,3 @@
-// src/services/quiz-service.ts
 'use server';
 
 import {db} from '@/lib/firebase';
@@ -11,8 +10,6 @@ import {
   getDocs,
   orderBy,
   Timestamp,
-  doc,
-  getDoc,
 } from 'firebase/firestore';
 
 export interface QuizResult {
@@ -22,29 +19,20 @@ export interface QuizResult {
   difficulty: string;
   score: number;
   totalQuestions: number;
-  createdAt: Timestamp | Date;
+  createdAt: string; 
 }
 
 export type SaveQuizResultInput = Omit<QuizResult, 'id' | 'createdAt'>;
 
 export async function saveQuizResult(
   result: SaveQuizResultInput
-): Promise<QuizResult> {
+): Promise<void> {
   try {
     const docData = {
       ...result,
       createdAt: serverTimestamp(),
     };
-    const docRef = await addDoc(collection(db, 'quizResults'), docData);
-    
-    const newDoc = await getDoc(docRef);
-    const savedData = newDoc.data();
-
-    return {
-        id: newDoc.id,
-        ...savedData,
-    } as QuizResult;
-
+    await addDoc(collection(db, 'quizResults'), docData);
   } catch (error) {
     console.error('Error saving quiz result:', error);
     throw new Error('Failed to save quiz result.');
@@ -66,10 +54,16 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
     const history: QuizResult[] = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
+      const createdAt = (data.createdAt as Timestamp)?.toDate()?.toISOString() || new Date().toISOString();
       history.push({
         id: doc.id,
-        ...data,
-      } as QuizResult);
+        userId: data.userId,
+        topic: data.topic,
+        difficulty: data.difficulty,
+        score: data.score,
+        totalQuestions: data.totalQuestions,
+        createdAt: createdAt,
+      });
     });
     return history;
   } catch (error) {
