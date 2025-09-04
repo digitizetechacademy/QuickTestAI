@@ -102,6 +102,7 @@ export default function QuizApp() {
 
   const handleAnswerSubmit = () => {
     if (selectedAnswer === null) return;
+
     setIsAnswered(true);
     const currentQuestion = quizData!.questions[currentQuestionIndex];
     let newScore = score;
@@ -110,15 +111,19 @@ export default function QuizApp() {
       setScore(newScore);
     }
 
-    setTimeout(() => {
-        if (currentQuestionIndex === quizData!.questions.length - 1) {
-            finishQuiz(newScore).then(() => {
-                setAppState('results');
-            });
-        } else {
-            handleNextQuestion();
-        }
-    }, 1200);
+    const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
+
+    if (isLastQuestion) {
+      // If it's the last question, finish the quiz immediately without a timeout.
+      finishQuiz(newScore).then(() => {
+        setAppState('results');
+      });
+    } else {
+      // For other questions, use a timeout to let the user see the result.
+      setTimeout(() => {
+        handleNextQuestion();
+      }, 1200);
+    }
   };
 
   const handleNextQuestion = () => {
@@ -228,6 +233,7 @@ export default function QuizApp() {
     if (!quizData) return null;
     const currentQuestion = quizData.questions[currentQuestionIndex];
     const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
+    const isLastQuestion = currentQuestionIndex === quizData.questions.length - 1;
 
     const getOptionStyle = (index: number) => {
         if (!isAnswered) {
@@ -278,7 +284,7 @@ export default function QuizApp() {
             ))}
           </CardContent>
           <CardFooter className="flex flex-col items-stretch">
-            {isAnswered && (
+            {isAnswered && !isLastQuestion && (
                 <div className="w-full p-4 mb-4 rounded-lg bg-secondary text-secondary-foreground animate-in fade-in duration-500">
                     <div className="flex items-start gap-3">
                         <BookOpen className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
@@ -289,8 +295,8 @@ export default function QuizApp() {
                     </div>
                 </div>
             )}
-            <Button onClick={handleAnswerSubmit} disabled={(selectedAnswer === null || isAnswered)} className="w-full">
-              {isAnswered ? (currentQuestionIndex === quizData.questions.length - 1 ? 'View Results' : 'Next Question') : 'Submit Answer'}
+            <Button onClick={handleAnswerSubmit} disabled={(selectedAnswer === null || (isAnswered && !isLastQuestion))}>
+              {isLastQuestion ? 'View Results' : 'Submit Answer'}
             </Button>
           </CardFooter>
         </Card>
