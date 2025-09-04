@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { CheckCircle, XCircle, MoveRight, BookOpen } from 'lucide-react';
 import { type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
 import { Button } from '@/components/ui/button';
@@ -56,7 +57,7 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
       return selectedAnswer === index ? 'bg-primary/10 border-primary' : 'border-border';
     }
     if (index === currentQuestion.correctAnswerIndex) {
-      return 'bg-accent/20 border-accent text-accent-foreground';
+      return 'bg-green-500/20 border-green-500 text-green-700 dark:text-green-400';
     }
     if (index === selectedAnswer) {
       return 'bg-destructive/20 border-destructive text-destructive-foreground';
@@ -91,7 +92,7 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
             >
               <div className="flex items-center w-full">
                 <span className="flex-1">{option}</span>
-                {isAnswered && index === currentQuestion.correctAnswerIndex && <CheckCircle className="w-5 h-5 text-accent" />}
+                {isAnswered && index === currentQuestion.correctAnswerIndex && <CheckCircle className="w-5 h-5 text-green-500" />}
                 {isAnswered && index !== currentQuestion.correctAnswerIndex && index === selectedAnswer && <XCircle className="w-5 h-5 text-destructive" />}
               </div>
             </Button>

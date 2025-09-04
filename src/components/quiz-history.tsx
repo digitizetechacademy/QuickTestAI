@@ -2,13 +2,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { format } from 'date-fns';
-import { Award, Home } from 'lucide-react';
+import { Award } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getQuizHistory, type QuizResult } from '@/services/quiz-service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
@@ -42,14 +40,10 @@ export default function QuizHistory() {
   return (
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div>
-              <CardTitle>Quiz History</CardTitle>
-              <CardDescription>
-                Here are the results from the quizzes you've taken.
-              </CardDescription>
-            </div>
-          </div>
+          <CardTitle>Quiz History</CardTitle>
+          <CardDescription>
+            Here are the results from the quizzes you've taken.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -82,7 +76,7 @@ export default function QuizHistory() {
                     const percentage = Math.round((result.score / result.totalQuestions) * 100);
                     let badgeColor;
                     if (percentage >= 80) {
-                      badgeColor = 'bg-accent text-accent-foreground';
+                      badgeColor = 'bg-green-500 text-white';
                     } else if (percentage >= 50) {
                       badgeColor = 'bg-yellow-500 text-white';
                     } else {
