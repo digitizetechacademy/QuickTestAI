@@ -14,6 +14,7 @@ import {z} from 'genkit';
 
 const GenerateMCQQuizInputSchema = z.object({
   topic: z.string().describe('The topic for the quiz.'),
+  difficulty: z.enum(['Easy', 'Medium', 'Hard']).describe('The difficulty of the quiz.'),
 });
 export type GenerateMCQQuizInput = z.infer<typeof GenerateMCQQuizInputSchema>;
 
@@ -43,6 +44,8 @@ const generateMCQQuizPrompt = ai.definePrompt({
   input: {schema: GenerateMCQQuizInputSchema},
   output: {schema: GenerateMCQQuizOutputSchema},
   prompt: `You are a quiz generator. Generate a quiz with 10 multiple-choice questions on the topic: {{{topic}}}.
+
+The difficulty of the quiz should be {{{difficulty}}}.
 
 Each question should have four options, and you should indicate the index of the correct answer (0, 1, 2, or 3).
 Also, provide a brief explanation for each correct answer.
