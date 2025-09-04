@@ -7,37 +7,37 @@ import { Building, ExternalLink } from 'lucide-react';
 const jobs = [
   {
     id: 1,
-    title: 'Junior Clerk',
-    department: 'State Revenue Department',
-    description: 'Responsible for administrative tasks, data entry, and file management. Requires good organizational skills and attention to detail.',
+    title: 'SSC CGL (Combined Graduate Level)',
+    department: 'Staff Selection Commission',
+    description: 'A major exam for recruitment to various Group B and C posts in ministries and departments of the Government of India.',
     applyLink: '#',
   },
   {
     id: 2,
-    title: 'Software Development Trainee',
-    department: 'National Informatics Centre',
-    description: 'Join a team of developers working on national-level software projects. A great opportunity to learn and grow in a dynamic environment.',
+    title: 'UPSC Civil Services',
+    department: 'Union Public Service Commission',
+    description: 'The premier exam for recruitment to top civil services like IAS, IPS, and IFS. A highly competitive and prestigious opportunity.',
     applyLink: '#',
   },
   {
     id: 3,
-    title: 'Technical Assistant',
-    department: 'Indian Space Research Organisation (ISRO)',
-    description: 'Assist scientists and engineers in various technical tasks related to space missions. Basic knowledge of electronics or mechanical engineering required.',
+    title: 'IBPS PO (Probationary Officer)',
+    department: 'Institute of Banking Personnel Selection',
+    description: 'A common written exam for the recruitment of Probationary Officers in multiple public sector banks across India.',
     applyLink: '#',
   },
   {
     id: 4,
-    title: 'Data Entry Operator',
-    department: 'Public Service Commission',
-    description: 'High-speed data entry and verification for various government departments. Requires accuracy and proficiency with computer applications.',
+    title: 'RRB NTPC (Non-Technical Popular Categories)',
+    department: 'Railway Recruitment Board',
+    description: 'Recruitment for various non-technical posts in the Indian Railways, including roles like clerk, time keeper, and station master.',
     applyLink: '#',
   },
     {
     id: 5,
-    title: 'Security Constable',
-    department: 'Railway Protection Force (RPF)',
-    description: 'Ensure the safety and security of railway passengers, property, and assets. Requires physical fitness and a commitment to public service.',
+    title: 'State PSC (Public Service Commission)',
+    department: 'Various State Governments',
+    description: 'Each state conducts its own civil service exams for recruitment to administrative positions within the state government.',
     applyLink: '#',
   },
 ];
@@ -47,9 +47,9 @@ export default function JobsPage() {
     <MainLayout>
       <div className="container mx-auto py-8">
         <div className="mb-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold">Upcoming Government Jobs</h1>
-            <p className="text-muted-foreground mt-2">
-                Explore the latest career opportunities in the public sector.
+            <h1 className="text-3xl md:text-4xl font-bold">Latest Government Job Openings</h1>
+            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+                This section highlights some of the latest major government job opportunities in India. The list is updated periodically to reflect current openings.
             </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
