@@ -143,19 +143,19 @@ export default function QuizApp() {
                         <FormControl>
                           <RadioGroupItem value="Easy" id="r1" />
                         </FormControl>
-                        <FormLabel htmlFor="r1" className="font-normal">Easy</FormLabel>
+                        <FormLabel htmlFor="r1" className="font-normal text-sm sm:text-base">Easy</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="Medium" id="r2" />
                         </FormControl>
-                        <FormLabel htmlFor="r2" className="font-normal">Medium</FormLabel>
+                        <FormLabel htmlFor="r2" className="font-normal text-sm sm:text-base">Medium</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="Hard" id="r3" />
                         </FormControl>
-                        <FormLabel htmlFor="r3" className="font-normal">Hard</FormLabel>
+                        <FormLabel htmlFor="r3" className="font-normal text-sm sm:text-base">Hard</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
@@ -313,7 +313,7 @@ export default function QuizApp() {
 
 
   return (
-    <div className="w-full max-w-2xl p-4">
+    <div className="w-full max-w-2xl p-2 sm:p-4">
       {appState === 'topic' && renderTopicSelector()}
       {appState === 'loading' && renderLoading()}
       {appState === 'quiz' && renderQuiz()}
@@ -321,3 +321,5 @@ export default function QuizApp() {
     </div>
   );
 }
+
+    
