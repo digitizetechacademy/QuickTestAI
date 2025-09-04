@@ -18,7 +18,7 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { BrainCircuit, LogOut, PanelLeft, Briefcase, Home } from 'lucide-react';
+import { BrainCircuit, LogOut, PanelLeft, Briefcase, Home, Book } from 'lucide-react';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
@@ -50,6 +50,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/">
                   <Home />
                   <span>New Quiz</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/library'}>
+                <Link href="/library">
+                  <Book />
+                  <span>Library</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
