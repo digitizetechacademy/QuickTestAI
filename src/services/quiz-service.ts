@@ -26,12 +26,10 @@ export interface QuizResult {
 }
 
 export type SaveQuizResultInput = Omit<QuizResult, 'id' | 'createdAt'>;
-export type SavedQuizResult = Omit<QuizResult, 'createdAt'> & { createdAt: string };
-
 
 export async function saveQuizResult(
   result: SaveQuizResultInput
-): Promise<SavedQuizResult> {
+): Promise<QuizResult> {
   try {
     const docData = {
       ...result,
@@ -44,13 +42,8 @@ export async function saveQuizResult(
 
     return {
         id: newDoc.id,
-        userId: savedData!.userId,
-        topic: savedData!.topic,
-        difficulty: savedData!.difficulty,
-        score: savedData!.score,
-        totalQuestions: savedData!.totalQuestions,
-        createdAt: (savedData!.createdAt as Timestamp).toDate().toISOString(),
-    } as SavedQuizResult;
+        ...savedData,
+    } as QuizResult;
 
   } catch (error) {
     console.error('Error saving quiz result:', error);

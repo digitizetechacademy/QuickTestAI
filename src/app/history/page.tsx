@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { getQuizHistory, type QuizResult } from '@/services/quiz-service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,34 +27,32 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
-  const fetchHistory = useCallback(async () => {
-    if (user) {
-      setLoading(true);
-      try {
-        const results = await getQuizHistory(user.uid);
-        const formattedHistory = results.map(r => ({
-          ...r,
-          createdAt: r.createdAt instanceof Timestamp 
-            ? r.createdAt.toDate().toISOString()
-            : new Date(r.createdAt as any).toISOString(),
-        }));
-        setHistory(formattedHistory);
-      } catch (error) {
-        console.error("Failed to fetch quiz history:", error);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-        setHistory([]);
-        setLoading(false);
-    }
-  }, [user]);
-
   useEffect(() => {
-    if (!authLoading) {
-      fetchHistory();
-    }
-  }, [user, authLoading, pathname, fetchHistory]);
+    const fetchHistory = async () => {
+      if (user) {
+        setLoading(true);
+        try {
+          const results = await getQuizHistory(user.uid);
+          const formattedHistory = results.map(r => ({
+            ...r,
+            createdAt: r.createdAt instanceof Timestamp 
+              ? r.createdAt.toDate().toISOString()
+              : new Date(r.createdAt as any).toISOString(),
+          }));
+          setHistory(formattedHistory);
+        } catch (error) {
+          console.error("Failed to fetch quiz history:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else if (!authLoading) {
+          setHistory([]);
+          setLoading(false);
+      }
+    };
+    
+    fetchHistory();
+  }, [user, authLoading, pathname]);
   
   if (authLoading || loading) {
     return <SplashScreen />;

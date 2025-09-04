@@ -70,29 +70,31 @@ export default function QuizApp() {
     }
   };
 
-  const handleAnswerSubmit = () => {
+  const handleAnswerSubmit = async () => {
     if (selectedAnswer === null) return;
 
     setIsAnswered(true);
     const correct = selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex;
     
+    let finalScore = score;
     if (correct) {
-      setScore((prev) => prev + 1);
+      finalScore = score + 1;
+      setScore(finalScore);
     }
 
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
     if (isLastQuestion) {
-      const finalScore = correct ? score + 1 : score;
-      handleSaveResult(finalScore);
+      await handleSaveResult(finalScore);
+      setAppState('results');
+    } else {
+      setTimeout(() => {
+        setIsAnswered(false);
+        setSelectedAnswer(null);
+        setCurrentQuestionIndex((prev) => prev + 1);
+      }, 1000);
     }
   };
   
-  const handleNextQuestion = () => {
-    setIsAnswered(false);
-    setSelectedAnswer(null);
-    setCurrentQuestionIndex((prev) => prev + 1);
-  };
-
   const handleSaveResult = async (finalScore: number) => {
      if (user) {
         try {
@@ -108,7 +110,6 @@ export default function QuizApp() {
                 description: 'Your quiz result has been saved to your history.',
             });
             router.refresh();
-            viewResults();
         } catch (error) {
             console.error('Save Error:', error);
             toast({
@@ -118,10 +119,6 @@ export default function QuizApp() {
             });
         }
     }
-  }
-
-  const viewResults = () => {
-    setAppState('results');
   }
 
   const resetQuizState = () => {
@@ -288,20 +285,10 @@ export default function QuizApp() {
                     </div>
                 </div>
             )}
-            {!isAnswered ? (
-              <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null}>
-                Submit Answer
-              </Button>
-            ) : isLastQuestion ? (
-              <Button onClick={viewResults}>
-                View Results
-              </Button>
-            ) : (
-              <Button onClick={handleNextQuestion}>
-                Next Question
-                <MoveRight className="ml-2" />
-              </Button>
-            )}
+            <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null || (isAnswered && !isLastQuestion)}>
+                {isAnswered ? (isLastQuestion ? 'View Results' : 'Next Question') : 'Submit Answer'}
+                 {isAnswered && !isLastQuestion && <MoveRight className="ml-2" />}
+            </Button>
           </CardFooter>
         </Card>
       </div>
