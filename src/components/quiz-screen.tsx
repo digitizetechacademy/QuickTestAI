@@ -26,19 +26,20 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
   const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
   const isLastQuestion = currentQuestionIndex === quizData.questions.length - 1;
 
-  useEffect(() => {
-    if (isAnswered && isLastQuestion) {
-      onQuizFinish(score);
-    }
-  }, [score, isAnswered, isLastQuestion, onQuizFinish]);
-
   const handleAnswerSubmit = () => {
     if (selectedAnswer === null) return;
+    
+    const isCorrect = selectedAnswer === currentQuestion.correctAnswerIndex;
+    let updatedScore = score;
+    if (isCorrect) {
+      updatedScore = score + 1;
+      setScore(updatedScore);
+    }
+    
     setIsAnswered(true);
 
-    const isCorrect = selectedAnswer === currentQuestion.correctAnswerIndex;
-    if (isCorrect) {
-      setScore((prev) => prev + 1);
+    if (isLastQuestion) {
+      onQuizFinish(updatedScore);
     }
   };
 
@@ -109,9 +110,9 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
             </div>
           )}
           {isAnswered ? (
-             <Button onClick={isLastQuestion ? () => onQuizFinish(score) : handleNext}>
-                {isLastQuestion ? 'View Results' : 'Next Question'}
-                {!isLastQuestion && <MoveRight className="ml-2" />}
+             <Button onClick={handleNext} disabled={isLastQuestion}>
+                Next Question
+                <MoveRight className="ml-2" />
             </Button>
           ) : (
             <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null}>
