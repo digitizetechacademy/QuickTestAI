@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookOpen, BrainCircuit, CheckCircle, History, Home, Loader2, LogIn, LogOut, Repeat, XCircle } from 'lucide-react';
-import Link from 'next/link';
+import { BookOpen, BrainCircuit, CheckCircle, Home, Loader2, Repeat, XCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
 import { saveQuizResult } from '@/services/quiz-service';
@@ -18,7 +18,6 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 
 type QuizQuestion = GenerateMCQQuizOutput['questions'][0];
@@ -37,7 +36,8 @@ export default function QuizApp() {
   const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { user, login, logout, loading: authLoading } = useAuth();
+  const { user } = useAuth();
+  const router = useRouter();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -131,39 +131,6 @@ export default function QuizApp() {
         handleTopicSubmit({ topic: topic, difficulty: difficulty });
     }
   };
-
-  const AuthArea = () => {
-    if (authLoading) {
-      return <div className="h-10 w-24 rounded-md animate-pulse bg-muted" />;
-    }
-    if (user) {
-      return (
-        <div className="flex items-center gap-2">
-           <Link href="/history" passHref>
-             <Button variant="ghost" size="sm">
-               <History className="mr-2 h-4 w-4" />
-               History
-             </Button>
-           </Link>
-          <Button variant="ghost" size="sm" onClick={logout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Button>
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
-            <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
-          </Avatar>
-        </div>
-      );
-    }
-    return (
-      <Button onClick={login} variant="ghost" size="sm">
-        <LogIn className="mr-2 h-4 w-4"/>
-        Login with Google
-      </Button>
-    );
-  };
-
 
   const renderTopicSelector = () => (
     <Card className="w-full max-w-lg shadow-lg animate-in fade-in duration-500">
@@ -372,25 +339,11 @@ export default function QuizApp() {
   };
 
   return (
-    <div className="w-full max-w-4xl p-2 sm:p-4">
-      <header className="flex justify-between items-center p-4">
-        <div className="flex items-center gap-2">
-           <Link href="/" passHref>
-             <h1 className="text-lg font-bold flex items-center gap-2">
-               <BrainCircuit className="w-5 h-5 text-primary" />
-               Quick Test AI
-             </h1>
-           </Link>
-        </div>
-        <AuthArea />
-      </header>
-
-      <main className="flex items-center justify-center py-8">
+    <div className="flex flex-col items-center justify-center w-full py-8">
         {appState === 'topic' && renderTopicSelector()}
         {appState === 'loading' && renderLoading()}
         {appState === 'quiz' && renderQuiz()}
         {appState === 'results' && renderResults()}
-      </main>
     </div>
   );
 }
