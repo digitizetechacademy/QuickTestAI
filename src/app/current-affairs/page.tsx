@@ -24,6 +24,14 @@ const currentAffairsData = [
         title: 'India Launches New Space Exploration Mission',
         details: 'ISRO successfully launched its latest mission to study the outer solar system, carrying advanced instruments to analyze planetary atmospheres and magnetic fields.',
       },
+      {
+        title: 'Sports World: Paris Olympics Highlights',
+        details: 'The 2024 Paris Olympics concluded with record-breaking performances and a spectacular closing ceremony. India celebrated its best-ever medal haul.',
+      },
+       {
+        title: 'Tech Sector: New Data Privacy Bill Passed',
+        details: 'A new comprehensive data privacy bill was passed, setting stricter guidelines for how companies collect and manage user data.',
+      },
     ],
   },
   {
@@ -37,6 +45,18 @@ const currentAffairsData = [
         title: 'Record Foreign Direct Investment (FDI) Inflow',
         details: 'India reported its highest-ever quarterly FDI inflow, with significant investments in the technology, manufacturing, and renewable energy sectors, boosting economic confidence.',
       },
+       {
+        title: 'Environmental Accord: Global Climate Conference',
+        details: 'Nations agreed to new emission reduction targets at the annual global climate conference, aiming to accelerate the transition to renewable energy.',
+      },
+      {
+        title: 'Major Infrastructure Project Inaugurated',
+        details: 'A new national highway was inaugurated, significantly improving connectivity between major industrial hubs and reducing travel time.',
+      },
+      {
+        title: 'Financial News: Reserve Bank Policy Review',
+        details: 'The Reserve Bank of India announced its latest monetary policy, keeping key interest rates stable to balance inflation and economic growth.',
+      },
     ],
   },
   {
@@ -49,6 +69,18 @@ const currentAffairsData = [
       {
         title: 'Digital India Initiative Expands',
         details: 'New services were launched under the Digital India program, aimed at providing high-speed internet access to more rural areas and promoting digital literacy nationwide.',
+      },
+       {
+        title: 'International Relations: Key Diplomatic Visit',
+        details: 'A high-level diplomatic visit strengthened bilateral ties with a key strategic partner, focusing on trade, defense, and technology cooperation.',
+      },
+       {
+        title: 'Startup Ecosystem: Unicorn Boom',
+        details: 'India\'s startup ecosystem saw a surge in new unicorns, with several tech startups achieving billion-dollar valuations in the first half of the year.',
+      },
+      {
+        title: 'Healthcare Advancements: National Health Mission Update',
+        details: 'The National Health Mission announced the expansion of telemedicine services to remote areas, improving healthcare access for millions.',
       },
     ],
   },
