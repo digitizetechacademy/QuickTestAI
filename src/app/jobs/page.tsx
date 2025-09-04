@@ -1,8 +1,9 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import MainLayout from '@/components/main-layout';
-import { Building, ExternalLink } from 'lucide-react';
+import { Building, ExternalLink, CalendarDays } from 'lucide-react';
 
 const jobs = [
   {
@@ -11,6 +12,7 @@ const jobs = [
     department: 'Staff Selection Commission',
     description: 'A major exam for recruitment to various Group B and C posts in ministries and departments of the Government of India.',
     applyLink: '#',
+    deadline: '2024-10-24',
   },
   {
     id: 2,
@@ -18,6 +20,7 @@ const jobs = [
     department: 'Union Public Service Commission',
     description: 'The premier exam for recruitment to top civil services like IAS, IPS, and IFS. A highly competitive and prestigious opportunity.',
     applyLink: '#',
+    deadline: '2025-02-15',
   },
   {
     id: 3,
@@ -25,6 +28,7 @@ const jobs = [
     department: 'Institute of Banking Personnel Selection',
     description: 'A common written exam for the recruitment of Probationary Officers in multiple public sector banks across India.',
     applyLink: '#',
+    deadline: '2024-11-05',
   },
   {
     id: 4,
@@ -32,6 +36,7 @@ const jobs = [
     department: 'Railway Recruitment Board',
     description: 'Recruitment for various non-technical posts in the Indian Railways, including roles like clerk, time keeper, and station master.',
     applyLink: '#',
+    deadline: '2024-12-20',
   },
     {
     id: 5,
@@ -39,6 +44,7 @@ const jobs = [
     department: 'Various State Governments',
     description: 'Each state conducts its own civil service exams for recruitment to administrative positions within the state government.',
     applyLink: '#',
+    deadline: '2024-11-30',
   },
 ];
 
@@ -64,6 +70,10 @@ export default function JobsPage() {
               </CardHeader>
               <CardContent className="flex-grow">
                 <p className="text-sm text-muted-foreground">{job.description}</p>
+                 <div className="mt-4 flex items-center text-sm font-medium text-primary">
+                  <CalendarDays className="w-4 h-4 mr-2" />
+                  Last Date to Apply: {new Date(job.deadline).toLocaleDateString()}
+                </div>
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full">
