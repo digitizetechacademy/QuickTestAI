@@ -31,7 +31,7 @@ export type SavedQuizResult = Omit<QuizResult, 'createdAt'> & { createdAt: strin
 
 export async function saveQuizResult(
   result: SaveQuizResultInput
-): Promise<QuizResult> {
+): Promise<SavedQuizResult> {
   try {
     const docData = {
       ...result,
@@ -39,14 +39,18 @@ export async function saveQuizResult(
     };
     const docRef = await addDoc(collection(db, 'quizResults'), docData);
     
-    // Fetch the just-saved document to get the server-generated timestamp
     const newDoc = await getDoc(docRef);
     const savedData = newDoc.data();
 
     return {
         id: newDoc.id,
-        ...savedData,
-    } as QuizResult;
+        userId: savedData!.userId,
+        topic: savedData!.topic,
+        difficulty: savedData!.difficulty,
+        score: savedData!.score,
+        totalQuestions: savedData!.totalQuestions,
+        createdAt: (savedData!.createdAt as Timestamp).toDate().toISOString(),
+    } as SavedQuizResult;
 
   } catch (error) {
     console.error('Error saving quiz result:', error);

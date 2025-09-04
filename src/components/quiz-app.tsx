@@ -17,6 +17,7 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 type AppState = 'topic' | 'loading' | 'quiz' | 'results';
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
@@ -33,6 +34,7 @@ export default function QuizApp() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const router = useRouter();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -82,30 +84,32 @@ export default function QuizApp() {
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
 
     if (isLastQuestion) {
-      if (user) {
-        try {
-            await saveQuizResult({
-                userId: user.uid,
-                topic: quizParams.topic,
-                difficulty: quizParams.difficulty,
-                score: isAnswered ? score : (selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex ? score + 1 : score),
-                totalQuestions: quizData!.questions.length,
-            });
-            toast({
-                title: 'Quiz Saved',
-                description: 'Your quiz result has been saved to your history.',
-            });
-        } catch (error) {
-          console.error('Save Error:', error);
-          toast({
-            title: 'Save Error',
-            description: 'Could not save your quiz result. Please try again.',
-            variant: 'destructive',
-          });
+        if (user) {
+            try {
+                const finalScore = isAnswered ? score : (selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex ? score + 1 : score)
+                await saveQuizResult({
+                    userId: user.uid,
+                    topic: quizParams.topic,
+                    difficulty: quizParams.difficulty,
+                    score: finalScore,
+                    totalQuestions: quizData!.questions.length,
+                });
+                toast({
+                    title: 'Quiz Saved',
+                    description: 'Your quiz result has been saved to your history.',
+                });
+                router.refresh(); // Refresh the history page data
+            } catch (error) {
+                console.error('Save Error:', error);
+                toast({
+                    title: 'Save Error',
+                    description: 'Could not save your quiz result. Please try again.',
+                    variant: 'destructive',
+                });
+            }
         }
-      }
-      setAppState('results');
-      return;
+        setAppState('results');
+        return;
     }
 
     setIsAnswered(false);
@@ -294,7 +298,8 @@ export default function QuizApp() {
   };
   
   const renderResults = () => {
-    const percentage = Math.round((score / quizData!.questions.length) * 100);
+    const finalScore = isAnswered ? score : (selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex ? score + 1 : score)
+    const percentage = Math.round((finalScore / quizData!.questions.length) * 100);
     let feedback = { title: "", description: "" };
 
     if (percentage === 100) {
@@ -330,7 +335,7 @@ export default function QuizApp() {
                           cy="65"
                         />
                     </svg>
-                    <span className="absolute text-3xl md:text-4xl font-bold">{score}/{quizData!.questions.length}</span>
+                    <span className="absolute text-3xl md:text-4xl font-bold">{finalScore}/{quizData!.questions.length}</span>
                 </div>
                 <p className="text-base md:text-lg">You scored {percentage}% on the "{quizParams.topic}" ({quizParams.difficulty}) quiz.</p>
             </CardContent>
