@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { Award, BookOpen, BrainCircuit, CheckCircle, Diamond, Home, Loader2, Medal, MoveRight, Repeat, Trophy, XCircle } from 'lucide-react';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
-import { saveQuizResult } from '@/services/quiz-service';
+import { saveQuizResult, type ClientQuizResult } from '@/services/quiz-service';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -89,6 +89,7 @@ export default function QuizApp() {
     }
     
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
+
     if (isLastQuestion) {
         await handleSaveResult(finalScore);
     } else {
@@ -115,7 +116,6 @@ export default function QuizApp() {
                 description: 'Your quiz result has been saved to your history.',
             });
             router.refresh();
-            viewResults();
         } catch (error) {
             console.error('Save Error:', error);
             toast({
@@ -124,9 +124,8 @@ export default function QuizApp() {
                 variant: 'destructive',
             });
         }
-    } else {
-        viewResults();
     }
+    viewResults();
   }
 
   const resetQuizState = () => {
