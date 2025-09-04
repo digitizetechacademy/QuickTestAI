@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -27,7 +28,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const [isQuizOpen, setIsQuizOpen] = React.useState(pathname === '/' || pathname === '/history' || pathname === '/jobs');
+  const [isQuizOpen, setIsQuizOpen] = React.useState(pathname === '/' || pathname === '/jobs');
 
 
   const handleLogout = async () => {
@@ -66,13 +67,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         <SidebarMenuSubButton asChild isActive={pathname === '/'}>
                             <Link href="/">
                                 <span>New Quiz</span>
-                            </Link>
-                        </SidebarMenuSubButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuSubButton asChild isActive={pathname === '/history'}>
-                            <Link href="/history">
-                                <span>Quiz History</span>
                             </Link>
                         </SidebarMenuSubButton>
                     </SidebarMenuItem>
