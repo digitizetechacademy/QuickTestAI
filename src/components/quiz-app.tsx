@@ -98,7 +98,6 @@ export default function QuizApp() {
         });
       }
     }
-    setAppState('results');
   };
 
   const handleAnswerSubmit = () => {
@@ -111,9 +110,15 @@ export default function QuizApp() {
       setScore(newScore);
     }
 
-    if (currentQuestionIndex === quizData!.questions.length - 1) {
-      setTimeout(() => finishQuiz(newScore), 1200);
-    }
+    setTimeout(() => {
+        if (currentQuestionIndex === quizData!.questions.length - 1) {
+            finishQuiz(newScore).then(() => {
+                setAppState('results');
+            });
+        } else {
+            handleNextQuestion();
+        }
+    }, 1200);
   };
 
   const handleNextQuestion = () => {
@@ -284,7 +289,7 @@ export default function QuizApp() {
                     </div>
                 </div>
             )}
-            <Button onClick={isAnswered ? handleNextQuestion : handleAnswerSubmit} disabled={selectedAnswer === null && !isAnswered} className="w-full">
+            <Button onClick={handleAnswerSubmit} disabled={(selectedAnswer === null || isAnswered)} className="w-full">
               {isAnswered ? (currentQuestionIndex === quizData.questions.length - 1 ? 'View Results' : 'Next Question') : 'Submit Answer'}
             </Button>
           </CardFooter>
@@ -357,5 +362,3 @@ export default function QuizApp() {
     </div>
   );
 }
-
-    
