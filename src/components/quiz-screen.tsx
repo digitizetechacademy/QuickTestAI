@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { CheckCircle, XCircle, MoveRight, BookOpen } from 'lucide-react';
 import { type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,12 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
   const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
   const isLastQuestion = currentQuestionIndex === quizData.questions.length - 1;
 
+  useEffect(() => {
+    if (isAnswered && isLastQuestion) {
+      onQuizFinish(score);
+    }
+  }, [score, isAnswered, isLastQuestion, onQuizFinish]);
+
   const handleAnswerSubmit = () => {
     if (selectedAnswer === null) return;
     setIsAnswered(true);
@@ -37,9 +43,7 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
   };
 
   const handleNext = () => {
-    if (isLastQuestion) {
-      onQuizFinish(score + (selectedAnswer === currentQuestion.correctAnswerIndex ? 1 : 0) - (isAnswered ? 0 : 0));
-    } else {
+    if (!isLastQuestion) {
       setIsAnswered(false);
       setSelectedAnswer(null);
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -105,9 +109,9 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
             </div>
           )}
           {isAnswered ? (
-            <Button onClick={handleNext}>
-              {isLastQuestion ? 'View Results' : 'Next Question'}
-              {!isLastQuestion && <MoveRight className="ml-2" />}
+             <Button onClick={isLastQuestion ? () => onQuizFinish(score) : handleNext}>
+                {isLastQuestion ? 'View Results' : 'Next Question'}
+                {!isLastQuestion && <MoveRight className="ml-2" />}
             </Button>
           ) : (
             <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null}>
