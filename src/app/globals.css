@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'PT Sans', sans-serif;
 }
 
 @layer base {
   :root {
-    --background: 220 20% 96%;
+    --background: 240 10% 98%;
     --foreground: 220 15% 20%;
     --card: 0 0% 100%;
     --card-foreground: 220 15% 20%;
