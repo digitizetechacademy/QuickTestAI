@@ -17,19 +17,13 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
 } from '@/components/ui/sidebar';
-import { BrainCircuit, History, Home, LogOut, PanelLeft, Briefcase, ChevronDown } from 'lucide-react';
-import * as React from 'react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { BrainCircuit, LogOut, PanelLeft, Briefcase, Home } from 'lucide-react';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const [isQuizOpen, setIsQuizOpen] = React.useState(pathname === '/' || pathname === '/jobs');
-
 
   const handleLogout = async () => {
     await logout();
@@ -51,35 +45,22 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            <Collapsible open={isQuizOpen} onOpenChange={setIsQuizOpen} className="w-full">
-              <SidebarMenuItem>
-                 <CollapsibleTrigger asChild>
-                    <SidebarMenuButton>
-                      <Home />
-                      <span>Quiz Section</span>
-                      <ChevronDown className="ml-auto h-4 w-4 transition-transform data-[state=open]:rotate-180" />
-                    </SidebarMenuButton>
-                 </CollapsibleTrigger>
-              </SidebarMenuItem>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                    <SidebarMenuItem>
-                        <SidebarMenuSubButton asChild isActive={pathname === '/'}>
-                            <Link href="/">
-                                <span>New Quiz</span>
-                            </Link>
-                        </SidebarMenuSubButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuSubButton asChild isActive={pathname === '/jobs'}>
-                            <Link href="/jobs">
-                                <span>Upcoming Jobs</span>
-                            </Link>
-                        </SidebarMenuSubButton>
-                    </SidebarMenuItem>
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </Collapsible>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/'}>
+                <Link href="/">
+                  <Home />
+                  <span>New Quiz</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/jobs'}>
+                <Link href="/jobs">
+                  <Briefcase />
+                  <span>Upcoming Jobs</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
