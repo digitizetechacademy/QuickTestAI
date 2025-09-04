@@ -6,7 +6,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
-import { Book, History, Loader2, Search } from 'lucide-react';
+import { Book, History, Loader2, Search, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { generateExplanation } from '@/ai/flows/generate-explanation';
@@ -29,6 +29,7 @@ export default function LibraryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<Reading[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const [historyError, setHistoryError] = useState<string | null>(null);
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -41,23 +42,30 @@ export default function LibraryPage() {
   const fetchHistory = async () => {
     if (!user) return;
     setHistoryLoading(true);
+    setHistoryError(null);
     try {
       const results = await getReadingHistory(user.uid);
       setHistory(results);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch reading history:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not load your reading history.',
-        variant: 'destructive',
-      });
+      if (error.message?.includes('NOT_FOUND')) {
+        setHistoryError("Firestore database not found. Please create one in your Firebase console's 'Build' section.");
+      } else {
+        toast({
+            title: 'Error',
+            description: 'Could not load your reading history.',
+            variant: 'destructive',
+        });
+      }
     } finally {
       setHistoryLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchHistory();
+    if (user) {
+        fetchHistory();
+    }
   }, [user]);
 
   const handleSearch: SubmitHandler<FormValues> = async (values) => {
@@ -72,11 +80,16 @@ export default function LibraryPage() {
       }
     } catch (error) {
       console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Failed to get explanation. Please try again.',
-        variant: 'destructive',
-      });
+      const errorMessage = (error as Error)?.message;
+      if (errorMessage?.includes('NOT_FOUND')) {
+          setHistoryError("Firestore database not found. Please create one in your Firebase console's 'Build' section.");
+      } else {
+        toast({
+            title: 'Error',
+            description: 'Failed to get explanation. Please try again.',
+            variant: 'destructive',
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +99,53 @@ export default function LibraryPage() {
     form.setValue('topic', topic);
     handleSearch({ topic });
   };
+  
+  const renderHistoryContent = () => {
+      if (historyLoading) {
+        return (
+            <div className="space-y-3">
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            </div>
+        );
+      }
+      
+      if (historyError) {
+          return (
+             <div className="text-center py-4 text-destructive">
+              <AlertTriangle className="mx-auto h-8 w-8" />
+              <p className="mt-2 text-sm">{historyError}</p>
+            </div>
+          )
+      }
+
+      if (history.length === 0) {
+        return (
+            <p className="text-sm text-muted-foreground text-center py-4">
+            Your reading history is empty.
+            </p>
+        );
+      }
+      
+      return (
+        <div className="space-y-2">
+            {history.map((item) => (
+            <Button
+                key={item.id}
+                variant="ghost"
+                className="w-full justify-between"
+                onClick={() => handleHistoryClick(item.topic)}
+            >
+                <span className="truncate">{item.topic}</span>
+                <span className="text-xs text-muted-foreground flex-shrink-0 ml-4">
+                {format(new Date(item.createdAt), 'PP')}
+                </span>
+            </Button>
+            ))}
+        </div>
+      );
+  }
 
   return (
     <MainLayout>
@@ -168,33 +228,7 @@ export default function LibraryPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {historyLoading ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-9 w-full" />
-                  <Skeleton className="h-9 w-full" />
-                  <Skeleton className="h-9 w-full" />
-                </div>
-              ) : history.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  Your reading history is empty.
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {history.map((item) => (
-                    <Button
-                      key={item.id}
-                      variant="ghost"
-                      className="w-full justify-between"
-                      onClick={() => handleHistoryClick(item.topic)}
-                    >
-                      <span className="truncate">{item.topic}</span>
-                      <span className="text-xs text-muted-foreground flex-shrink-0 ml-4">
-                        {format(new Date(item.createdAt), 'PP')}
-                      </span>
-                    </Button>
-                  ))}
-                </div>
-              )}
+              {renderHistoryContent()}
             </CardContent>
           </Card>
         </div>
