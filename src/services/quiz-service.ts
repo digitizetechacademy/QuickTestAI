@@ -1,3 +1,4 @@
+// src/services/quiz-service.ts
 'use server';
 
 import {db} from '@/lib/firebase';
@@ -10,6 +11,8 @@ import {
   getDocs,
   orderBy,
   Timestamp,
+  doc,
+  getDoc,
 } from 'firebase/firestore';
 
 export interface QuizResult {
@@ -28,15 +31,23 @@ export type SavedQuizResult = Omit<QuizResult, 'createdAt'> & { createdAt: strin
 
 export async function saveQuizResult(
   result: SaveQuizResultInput
-): Promise<string> {
+): Promise<QuizResult> {
   try {
     const docData = {
       ...result,
       createdAt: serverTimestamp(),
     };
     const docRef = await addDoc(collection(db, 'quizResults'), docData);
+    
+    // Fetch the just-saved document to get the server-generated timestamp
+    const newDoc = await getDoc(docRef);
+    const savedData = newDoc.data();
 
-    return docRef.id;
+    return {
+        id: newDoc.id,
+        ...savedData,
+    } as QuizResult;
+
   } catch (error) {
     console.error('Error saving quiz result:', error);
     throw new Error('Failed to save quiz result.');

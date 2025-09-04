@@ -5,10 +5,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { BookOpen, BrainCircuit, CheckCircle, Home, Loader2, MoveRight, Repeat, XCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
-import { saveQuizResult, type SavedQuizResult } from '@/services/quiz-service';
+import { saveQuizResult } from '@/services/quiz-service';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +17,6 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
 
 type AppState = 'topic' | 'loading' | 'quiz' | 'results';
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
@@ -35,8 +33,6 @@ export default function QuizApp() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -72,31 +68,33 @@ export default function QuizApp() {
     }
   };
 
-  const handleAnswerSubmit = async () => {
+  const handleAnswerSubmit = () => {
     if (selectedAnswer === null) return;
 
     setIsAnswered(true);
     const correct = selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex;
-    const newScore = correct ? score + 1 : score;
-    setScore(newScore);
-
+    if (correct) {
+        setScore((prev) => prev + 1);
+    }
+  };
+  
+  const handleNextQuestion = async () => {
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
 
-    if (isLastQuestion && user) {
+    if (isLastQuestion) {
+      if (user) {
         try {
-            const result = await saveQuizResult({
+            await saveQuizResult({
                 userId: user.uid,
                 topic: quizParams.topic,
                 difficulty: quizParams.difficulty,
-                score: newScore,
+                score: score,
                 totalQuestions: quizData!.questions.length,
             });
             toast({
                 title: 'Quiz Saved',
                 description: 'Your quiz result has been saved to your history.',
             });
-            // Immediately navigate to results after saving
-            setAppState('results');
         } catch (error) {
           console.error('Save Error:', error);
           toast({
@@ -104,16 +102,8 @@ export default function QuizApp() {
             description: 'Could not save your quiz result. Please try again.',
             variant: 'destructive',
           });
-          // Still go to results even if save fails
-          setAppState('results');
         }
-    }
-  };
-  
-  const handleNextQuestion = () => {
-    const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
-
-    if (isLastQuestion) {
+      }
       setAppState('results');
       return;
     }
