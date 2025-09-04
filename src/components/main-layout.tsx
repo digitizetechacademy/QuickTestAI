@@ -18,7 +18,7 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { BrainCircuit, LogOut, PanelLeft, Briefcase, Home, Book } from 'lucide-react';
+import { BrainCircuit, LogOut, PanelLeft, Briefcase, Home, Book, Newspaper } from 'lucide-react';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
@@ -68,6 +68,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   <span>Upcoming Jobs</span>
                 </Link>
               </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/current-affairs'}>
+                    <Link href="/current-affairs">
+                        <Newspaper />
+                        <span>Current Affairs</span>
+                    </Link>
+                </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
