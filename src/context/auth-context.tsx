@@ -7,7 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from 'react';
-import {User, onAuthStateChanged, signInWithPopup, signOut} from 'firebase/auth';
+import {User, onAuthStateChanged, signInWithRedirect, getRedirectResult, signOut} from 'firebase/auth';
 import {auth, googleProvider} from '@/lib/firebase';
 import {useToast} from '@/hooks/use-toast';
 
@@ -30,17 +30,31 @@ export function AuthProvider({children}: {children: ReactNode}) {
       setUser(user);
       setLoading(false);
     });
+
+    // Handle the redirect result
+    getRedirectResult(auth)
+      .catch((error) => {
+        console.error('Error during sign-in redirect:', error);
+        toast({
+            title: 'Login Failed',
+            description: 'Could not sign you in with Google. Please try again.',
+            variant: 'destructive',
+        });
+      });
+
     return () => unsubscribe();
-  }, []);
+  }, [toast]);
 
   const login = async () => {
+    setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       console.error('Error signing in with Google', error);
+      setLoading(false);
       toast({
         title: 'Login Failed',
-        description: 'Could not sign you in with Google. Please try again.',
+        description: 'Could not initiate sign in with Google. Please try again.',
         variant: 'destructive',
       });
     }
