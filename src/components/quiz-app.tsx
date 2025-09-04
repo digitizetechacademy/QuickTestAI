@@ -88,7 +88,7 @@ export default function QuizApp() {
                 userId: user.uid,
                 topic: quizParams.topic,
                 difficulty: quizParams.difficulty,
-                score: score,
+                score: isAnswered ? score : (selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex ? score + 1 : score),
                 totalQuestions: quizData!.questions.length,
             });
             toast({
