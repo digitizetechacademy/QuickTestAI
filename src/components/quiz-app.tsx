@@ -78,44 +78,48 @@ export default function QuizApp() {
     if (correct) {
         setScore((prev) => prev + 1);
     }
+    
+    const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
+    if (isLastQuestion) {
+        handleSaveResult();
+    }
   };
   
-  const handleNextQuestion = async () => {
-    const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
-
-    if (isLastQuestion) {
-        if (user) {
-            try {
-                const finalScore = isAnswered ? score : (selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex ? score + 1 : score)
-                await saveQuizResult({
-                    userId: user.uid,
-                    topic: quizParams.topic,
-                    difficulty: quizParams.difficulty,
-                    score: finalScore,
-                    totalQuestions: quizData!.questions.length,
-                });
-                toast({
-                    title: 'Quiz Saved',
-                    description: 'Your quiz result has been saved to your history.',
-                });
-                router.refresh(); // Refresh the history page data
-            } catch (error) {
-                console.error('Save Error:', error);
-                toast({
-                    title: 'Save Error',
-                    description: 'Could not save your quiz result. Please try again.',
-                    variant: 'destructive',
-                });
-            }
-        }
-        setAppState('results');
-        return;
-    }
-
+  const handleNextQuestion = () => {
     setIsAnswered(false);
     setSelectedAnswer(null);
     setCurrentQuestionIndex((prev) => prev + 1);
   };
+
+  const handleSaveResult = async () => {
+     if (user) {
+        try {
+            await saveQuizResult({
+                userId: user.uid,
+                topic: quizParams.topic,
+                difficulty: quizParams.difficulty,
+                score: score,
+                totalQuestions: quizData!.questions.length,
+            });
+            toast({
+                title: 'Quiz Saved',
+                description: 'Your quiz result has been saved to your history.',
+            });
+            router.refresh(); 
+        } catch (error) {
+            console.error('Save Error:', error);
+            toast({
+                title: 'Save Error',
+                description: 'Could not save your quiz result. Please try again.',
+                variant: 'destructive',
+            });
+        }
+    }
+  }
+
+  const viewResults = () => {
+    setAppState('results');
+  }
 
   const resetQuizState = () => {
     setQuizData(null);
@@ -285,10 +289,14 @@ export default function QuizApp() {
               <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null}>
                 Submit Answer
               </Button>
+            ) : isLastQuestion ? (
+              <Button onClick={viewResults}>
+                View Results
+              </Button>
             ) : (
               <Button onClick={handleNextQuestion}>
-                {isLastQuestion ? 'View Results' : 'Next Question'}
-                {!isLastQuestion && <MoveRight className="ml-2" />}
+                Next Question
+                <MoveRight className="ml-2" />
               </Button>
             )}
           </CardFooter>
@@ -298,8 +306,7 @@ export default function QuizApp() {
   };
   
   const renderResults = () => {
-    const finalScore = isAnswered ? score : (selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex ? score + 1 : score)
-    const percentage = Math.round((finalScore / quizData!.questions.length) * 100);
+    const percentage = Math.round((score / quizData!.questions.length) * 100);
     let feedback = { title: "", description: "" };
 
     if (percentage === 100) {
@@ -335,7 +342,7 @@ export default function QuizApp() {
                           cy="65"
                         />
                     </svg>
-                    <span className="absolute text-3xl md:text-4xl font-bold">{finalScore}/{quizData!.questions.length}</span>
+                    <span className="absolute text-3xl md:text-4xl font-bold">{score}/{quizData!.questions.length}</span>
                 </div>
                 <p className="text-base md:text-lg">You scored {percentage}% on the "{quizParams.topic}" ({quizParams.difficulty}) quiz.</p>
             </CardContent>
