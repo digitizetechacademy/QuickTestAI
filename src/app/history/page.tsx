@@ -39,7 +39,7 @@ export default function HistoryPage() {
     };
     
     fetchHistory();
-  }, [user, authLoading]);
+  }, [user?.uid, authLoading]);
   
   if (authLoading || loading) {
     return <SplashScreen />;
