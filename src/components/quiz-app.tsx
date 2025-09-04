@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookOpen, BrainCircuit, CheckCircle, Home, Loader2, Repeat, XCircle } from 'lucide-react';
+import { BookOpen, BrainCircuit, CheckCircle, History, Home, Loader2, LogIn, LogOut, Repeat, XCircle } from 'lucide-react';
+import Link from 'next/link';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
+import { saveQuizResult } from '@/services/quiz-service';
+import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -15,6 +18,8 @@ import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+
 
 type QuizQuestion = GenerateMCQQuizOutput['questions'][0];
 type AppState = 'topic' | 'loading' | 'quiz' | 'results';
@@ -32,6 +37,7 @@ export default function QuizApp() {
   const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { user, login, logout, loading: authLoading } = useAuth();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -42,7 +48,7 @@ export default function QuizApp() {
     resolver: zodResolver(formSchema),
     defaultValues: { topic: '', difficulty: 'Medium' },
   });
-
+  
   const handleTopicSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     setTopic(values.topic);
@@ -77,12 +83,33 @@ export default function QuizApp() {
     }
   };
 
-  const handleNextQuestion = () => {
-    setIsAnswered(false);
-    setSelectedAnswer(null);
+  const handleNextQuestion = async () => {
     if (currentQuestionIndex < quizData!.questions.length - 1) {
+      setIsAnswered(false);
+      setSelectedAnswer(null);
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
+      if (user) {
+        try {
+          await saveQuizResult({
+            userId: user.uid,
+            topic,
+            difficulty,
+            score,
+            totalQuestions: quizData!.questions.length,
+          });
+          toast({
+            title: 'Quiz Saved',
+            description: 'Your quiz result has been saved to your history.',
+          });
+        } catch (error) {
+          toast({
+            title: 'Save Error',
+            description: 'Could not save your quiz result. Please try again.',
+            variant: 'destructive',
+          });
+        }
+      }
       setAppState('results');
     }
   };
@@ -90,18 +117,53 @@ export default function QuizApp() {
   const restartQuiz = (newTopic = false) => {
     form.reset();
     setQuizData(null);
-    setTopic('');
-    setDifficulty('Medium');
     setCurrentQuestionIndex(0);
     setScore(0);
     setSelectedAnswer(null);
     setIsAnswered(false);
-    setAppState(newTopic ? 'topic' : 'loading');
-
-    if (!newTopic) {
+    
+    if (newTopic) {
+        setTopic('');
+        setDifficulty('Medium');
+        setAppState('topic');
+    } else {
+        setAppState('loading');
         handleTopicSubmit({ topic: topic, difficulty: difficulty });
     }
   };
+
+  const AuthArea = () => {
+    if (authLoading) {
+      return <div className="h-10 w-24 rounded-md animate-pulse bg-muted" />;
+    }
+    if (user) {
+      return (
+        <div className="flex items-center gap-2">
+           <Link href="/history" passHref>
+             <Button variant="ghost" size="sm">
+               <History className="mr-2 h-4 w-4" />
+               History
+             </Button>
+           </Link>
+          <Button variant="ghost" size="sm" onClick={logout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
+            <AvatarFallback>{user.displayName?.charAt(0)}</AvatarFallback>
+          </Avatar>
+        </div>
+      );
+    }
+    return (
+      <Button onClick={login} variant="ghost" size="sm">
+        <LogIn className="mr-2 h-4 w-4"/>
+        Login with Google
+      </Button>
+    );
+  };
+
 
   const renderTopicSelector = () => (
     <Card className="w-full max-w-lg shadow-lg animate-in fade-in duration-500">
@@ -183,7 +245,7 @@ export default function QuizApp() {
   const renderQuiz = () => {
     if (!quizData) return null;
     const currentQuestion = quizData.questions[currentQuestionIndex];
-    const progress = ((currentQuestionIndex + 1) / quizData.questions.length) * 100;
+    const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
 
     const getOptionStyle = (index: number) => {
         if (!isAnswered) {
@@ -268,7 +330,6 @@ export default function QuizApp() {
         feedback = { title: "Keep Studying!", description: "Don't be discouraged. Learning is a journey." };
     }
 
-
     return (
         <Card className="w-full max-w-lg text-center shadow-lg animate-in zoom-in-95 duration-500">
             <CardHeader>
@@ -276,11 +337,11 @@ export default function QuizApp() {
                 <CardDescription>{feedback.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center gap-4">
-                <div className="relative flex items-center justify-center w-32 h-32 md:w-40 md:h-40">
-                    <svg className="w-full h-full transform -rotate-90">
-                        <circle className="text-secondary" strokeWidth="10" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64" />
+                 <div className="relative flex items-center justify-center w-32 h-32 md:w-40 md:h-40">
+                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 130 130">
+                        <circle className="text-secondary" strokeWidth="10" stroke="currentColor" fill="transparent" r="58" cx="65" cy="65" />
                         <circle
-                          className="text-primary"
+                          className="text-primary transition-all duration-1000 ease-out"
                           strokeWidth="10"
                           strokeDasharray={2 * Math.PI * 58}
                           strokeDashoffset={(2 * Math.PI * 58) * (1 - percentage / 100)}
@@ -288,9 +349,8 @@ export default function QuizApp() {
                           stroke="currentColor"
                           fill="transparent"
                           r="58"
-                          cx="64"
-                          cy="64"
-                          style={{ transition: 'stroke-dashoffset 1s ease-out' }}
+                          cx="65"
+                          cy="65"
                         />
                     </svg>
                     <span className="absolute text-3xl md:text-4xl font-bold">{score}/{quizData!.questions.length}</span>
@@ -311,15 +371,26 @@ export default function QuizApp() {
     );
   };
 
-
   return (
-    <div className="w-full max-w-2xl p-2 sm:p-4">
-      {appState === 'topic' && renderTopicSelector()}
-      {appState === 'loading' && renderLoading()}
-      {appState === 'quiz' && renderQuiz()}
-      {appState === 'results' && renderResults()}
+    <div className="w-full max-w-4xl p-2 sm:p-4">
+      <header className="flex justify-between items-center p-4">
+        <div className="flex items-center gap-2">
+           <Link href="/" passHref>
+             <h1 className="text-lg font-bold flex items-center gap-2">
+               <BrainCircuit className="w-5 h-5 text-primary" />
+               Quick Test AI
+             </h1>
+           </Link>
+        </div>
+        <AuthArea />
+      </header>
+
+      <main className="flex items-center justify-center py-8">
+        {appState === 'topic' && renderTopicSelector()}
+        {appState === 'loading' && renderLoading()}
+        {appState === 'quiz' && renderQuiz()}
+        {appState === 'results' && renderResults()}
+      </main>
     </div>
   );
 }
-
-    
