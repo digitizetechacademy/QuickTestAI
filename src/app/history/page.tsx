@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils';
 import MainLayout from '@/components/main-layout';
 import SplashScreen from '@/components/splash-screen';
 import LoginPage from '@/components/login-page';
-import { usePathname } from 'next/navigation';
 import { Timestamp } from 'firebase/firestore';
 
 interface ClientQuizResult extends Omit<QuizResult, 'createdAt'> {
@@ -25,7 +24,6 @@ export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
   const [history, setHistory] = useState<ClientQuizResult[]>([]);
   const [loading, setLoading] = useState(true);
-  const pathname = usePathname();
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -52,7 +50,7 @@ export default function HistoryPage() {
     };
     
     fetchHistory();
-  }, [user, authLoading, pathname]);
+  }, [user, authLoading]);
   
   if (authLoading || loading) {
     return <SplashScreen />;
