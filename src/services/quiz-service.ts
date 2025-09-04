@@ -19,14 +19,14 @@ export interface QuizResult {
   difficulty: string;
   score: number;
   totalQuestions: number;
-  createdAt: Date;
+  createdAt: Date | Timestamp;
 }
 
 export type SaveQuizResultInput = Omit<QuizResult, 'id' | 'createdAt'>;
 
 export async function saveQuizResult(
   result: SaveQuizResultInput
-): Promise<QuizResult> {
+): Promise<Omit<QuizResult, 'createdAt'> & { createdAt: string }> {
   try {
     const docData = {
       ...result,
@@ -34,11 +34,10 @@ export async function saveQuizResult(
     };
     const docRef = await addDoc(collection(db, 'quizResults'), docData);
 
-    // The returned object will have the server-generated timestamp resolved to a Date
     return {
       ...result,
       id: docRef.id,
-      createdAt: new Date(), // Approximate, client-side timestamp. Real value is on server.
+      createdAt: new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error saving quiz result:', error);
@@ -64,13 +63,12 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
       history.push({
         id: doc.id,
         ...data,
-        // Convert Firestore Timestamp to JS Date
         createdAt: (data.createdAt as Timestamp).toDate(),
       } as QuizResult);
     });
     return history;
   } catch (error) {
     console.error('Error getting quiz history:', error);
-    return [];
+    throw new Error('Failed to get quiz history');
   }
 }
