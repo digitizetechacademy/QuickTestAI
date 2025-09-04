@@ -74,45 +74,53 @@ export default function QuizApp() {
     }
   };
 
+  const finishQuiz = async (finalScore: number) => {
+    if (user) {
+      try {
+        const result: SaveQuizResultInput = {
+          userId: user.uid,
+          topic,
+          difficulty,
+          score: finalScore,
+          totalQuestions: quizData!.questions.length,
+        };
+        await saveQuizResult(result);
+        toast({
+          title: 'Quiz Saved',
+          description: 'Your quiz result has been saved to your history.',
+        });
+      } catch (error) {
+        console.error('Save Error:', error);
+        toast({
+          title: 'Save Error',
+          description: 'Could not save your quiz result. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    }
+    setAppState('results');
+  };
+
   const handleAnswerSubmit = () => {
     if (selectedAnswer === null) return;
     setIsAnswered(true);
     const currentQuestion = quizData!.questions[currentQuestionIndex];
+    let newScore = score;
     if (selectedAnswer === currentQuestion.correctAnswerIndex) {
-      setScore((prev) => prev + 1);
+      newScore = score + 1;
+      setScore(newScore);
+    }
+
+    if (currentQuestionIndex === quizData!.questions.length - 1) {
+      setTimeout(() => finishQuiz(newScore), 1200);
     }
   };
 
-  const handleNextQuestion = async () => {
+  const handleNextQuestion = () => {
     setIsAnswered(false);
     setSelectedAnswer(null);
     if (currentQuestionIndex < quizData!.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
-    } else {
-      if (user) {
-        try {
-          const result: SaveQuizResultInput = {
-            userId: user.uid,
-            topic,
-            difficulty,
-            score,
-            totalQuestions: quizData!.questions.length,
-          };
-          await saveQuizResult(result);
-          toast({
-            title: 'Quiz Saved',
-            description: 'Your quiz result has been saved to your history.',
-          });
-        } catch (error) {
-          console.error('Save Error:', error);
-          toast({
-            title: 'Save Error',
-            description: 'Could not save your quiz result. Please try again.',
-            variant: 'destructive',
-          });
-        }
-      }
-      setAppState('results');
     }
   };
 
@@ -277,7 +285,7 @@ export default function QuizApp() {
                 </div>
             )}
             <Button onClick={isAnswered ? handleNextQuestion : handleAnswerSubmit} disabled={selectedAnswer === null && !isAnswered} className="w-full">
-              {isAnswered ? (currentQuestionIndex === quizData.questions.length - 1 ? 'Finish Quiz' : 'Next Question') : 'Submit Answer'}
+              {isAnswered ? (currentQuestionIndex === quizData.questions.length - 1 ? 'View Results' : 'Next Question') : 'Submit Answer'}
             </Button>
           </CardFooter>
         </Card>
@@ -349,3 +357,5 @@ export default function QuizApp() {
     </div>
   );
 }
+
+    
