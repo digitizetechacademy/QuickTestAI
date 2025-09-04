@@ -43,7 +43,7 @@ const generateMCQQuizPrompt = ai.definePrompt({
   name: 'generateMCQQuizPrompt',
   input: {schema: GenerateMCQQuizInputSchema},
   output: {schema: GenerateMCQQuizOutputSchema},
-  prompt: `You are a quiz generator. Generate a quiz with 5 multiple-choice questions on the topic: {{{topic}}}.
+  prompt: `You are a quiz generator. Generate a quiz with 10 multiple-choice questions on the topic: {{{topic}}}.
 
 The difficulty of the quiz should be {{{difficulty}}}.
 
