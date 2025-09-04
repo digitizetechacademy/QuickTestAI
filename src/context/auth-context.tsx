@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -7,7 +8,7 @@ import {
   useEffect,
   ReactNode,
 } from 'react';
-import {User, onAuthStateChanged, signInWithRedirect, getRedirectResult, signOut} from 'firebase/auth';
+import {User, onAuthStateChanged, signInWithRedirect, getRedirectResult, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import {auth, googleProvider} from '@/lib/firebase';
 import {useToast} from '@/hooks/use-toast';
 
@@ -16,6 +17,8 @@ interface AuthContextType {
   loading: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  signUpWithEmail: (email: string, pass: string) => Promise<any>;
+  signInWithEmail: (email: string, pass: string) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,8 +76,16 @@ export function AuthProvider({children}: {children: ReactNode}) {
     }
   };
 
+  const signUpWithEmail = async (email: string, pass: string) => {
+    return createUserWithEmailAndPassword(auth, email, pass);
+  };
+  
+  const signInWithEmail = async (email: string, pass: string) => {
+    return signInWithEmailAndPassword(auth, email, pass);
+  };
+
   return (
-    <AuthContext.Provider value={{user, loading, login, logout}}>
+    <AuthContext.Provider value={{user, loading, login, logout, signUpWithEmail, signInWithEmail}}>
       {children}
     </AuthContext.Provider>
   );
