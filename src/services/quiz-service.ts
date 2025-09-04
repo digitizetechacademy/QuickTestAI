@@ -24,15 +24,13 @@ export interface QuizResult {
 
 export type SaveQuizResultInput = Omit<QuizResult, 'id' | 'createdAt'>;
 
-export async function saveQuizResult(
-  result: SaveQuizResultInput
-): Promise<void> {
+export async function saveQuizResult(result: SaveQuizResultInput): Promise<string> {
   try {
-    const docData = {
+    const docRef = await addDoc(collection(db, 'quizResults'), {
       ...result,
       createdAt: serverTimestamp(),
-    };
-    await addDoc(collection(db, 'quizResults'), docData);
+    });
+    return docRef.id;
   } catch (error) {
     console.error('Error saving quiz result:', error);
     throw new Error('Failed to save quiz result.');
@@ -54,7 +52,8 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
     const history: QuizResult[] = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      const createdAt = (data.createdAt as Timestamp)?.toDate()?.toISOString() || new Date().toISOString();
+      // Ensure createdAt is a serializable string.
+      const createdAt = (data.createdAt as Timestamp)?.toDate()?.toISOString() ?? new Date().toISOString();
       history.push({
         id: doc.id,
         userId: data.userId,
@@ -62,7 +61,7 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
         difficulty: data.difficulty,
         score: data.score,
         totalQuestions: data.totalQuestions,
-        createdAt: createdAt,
+        createdAt,
       });
     });
     return history;

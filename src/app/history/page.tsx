@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { Award, Home } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getQuizHistory, type QuizResult } from '@/services/quiz-service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, Award } from 'lucide-react';
-import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import MainLayout from '@/components/main-layout';
 import SplashScreen from '@/components/splash-screen';
@@ -22,26 +22,25 @@ export default function HistoryPage() {
 
   useEffect(() => {
     const fetchHistory = async () => {
-      if (user) {
-        setLoading(true);
-        try {
-          const results = await getQuizHistory(user.uid);
-          setHistory(results);
-        } catch (error) {
-          console.error("Failed to fetch quiz history:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else if (!authLoading) {
-          setHistory([]);
-          setLoading(false);
+      if (!user) {
+        if (!authLoading) setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const results = await getQuizHistory(user.uid);
+        setHistory(results);
+      } catch (error) {
+        console.error("Failed to fetch quiz history:", error);
+      } finally {
+        setLoading(false);
       }
     };
     
     fetchHistory();
   }, [user?.uid, authLoading]);
   
-  if (authLoading || loading) {
+  if (authLoading || (loading && !history.length)) {
     return <SplashScreen />;
   }
 
