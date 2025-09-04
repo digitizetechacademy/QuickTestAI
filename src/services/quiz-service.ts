@@ -13,16 +13,18 @@ import {
 } from 'firebase/firestore';
 
 export interface QuizResult {
-  id?: string;
+  id: string;
   userId: string;
   topic: string;
   difficulty: string;
   score: number;
   totalQuestions: number;
-  createdAt: Date | Timestamp;
+  createdAt: Timestamp | Date;
 }
 
 export type SaveQuizResultInput = Omit<QuizResult, 'id' | 'createdAt'>;
+export type SavedQuizResult = Omit<QuizResult, 'createdAt'> & { createdAt: string };
+
 
 export async function saveQuizResult(
   result: SaveQuizResultInput
@@ -59,7 +61,6 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
       history.push({
         id: doc.id,
         ...data,
-        createdAt: data.createdAt,
       } as QuizResult);
     });
     return history;

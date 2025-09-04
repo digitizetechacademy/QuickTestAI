@@ -19,8 +19,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
-
-type QuizQuestion = GenerateMCQQuizOutput['questions'][0];
 type AppState = 'topic' | 'loading' | 'quiz' | 'results';
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
@@ -32,8 +30,7 @@ const formSchema = z.object({
 export default function QuizApp() {
   const [appState, setAppState] = useState<AppState>('topic');
   const [quizData, setQuizData] = useState<GenerateMCQQuizOutput | null>(null);
-  const [topic, setTopic] = useState('');
-  const [difficulty, setDifficulty] = useState<Difficulty>('Medium');
+  const [quizParams, setQuizParams] = useState({ topic: '', difficulty: 'Medium' as Difficulty });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
@@ -51,9 +48,8 @@ export default function QuizApp() {
   
   const handleTopicSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    setTopic(values.topic);
-    setDifficulty(values.difficulty);
     setAppState('loading');
+    setQuizParams({ topic: values.topic, difficulty: values.difficulty });
     try {
       const quiz = await generateMCQQuiz({ topic: values.topic, difficulty: values.difficulty });
       if (!quiz || !quiz.questions || quiz.questions.length === 0) {
@@ -74,52 +70,46 @@ export default function QuizApp() {
     }
   };
 
-  const finishQuiz = async (finalScore: number) => {
-    if (user) {
-      try {
-        const result: SaveQuizResultInput = {
-          userId: user.uid,
-          topic,
-          difficulty,
-          score: finalScore,
-          totalQuestions: quizData!.questions.length,
-        };
-        await saveQuizResult(result);
-        toast({
-          title: 'Quiz Saved',
-          description: 'Your quiz result has been saved to your history.',
-        });
-      } catch (error) {
-        console.error('Save Error:', error);
-        toast({
-          title: 'Save Error',
-          description: 'Could not save your quiz result. Please try again.',
-          variant: 'destructive',
-        });
-      }
-    }
-  };
-
-  const handleAnswerSubmit = () => {
+  const handleAnswerSubmit = async () => {
     if (selectedAnswer === null) return;
 
     setIsAnswered(true);
-    const currentQuestion = quizData!.questions[currentQuestionIndex];
-    let newScore = score;
-    if (selectedAnswer === currentQuestion.correctAnswerIndex) {
-      newScore = score + 1;
-      setScore(newScore);
-    }
+    const correct = selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex;
+    const newScore = correct ? score + 1 : score;
+    setScore(newScore);
 
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
 
     if (isLastQuestion) {
-       finishQuiz(newScore);
+      if (user) {
+        try {
+          const result: SaveQuizResultInput = {
+            userId: user.uid,
+            topic: quizParams.topic,
+            difficulty: quizParams.difficulty,
+            score: newScore,
+            totalQuestions: quizData!.questions.length,
+          };
+          await saveQuizResult(result);
+          toast({
+            title: 'Quiz Saved',
+            description: 'Your quiz result has been saved to your history.',
+          });
+        } catch (error) {
+          console.error('Save Error:', error);
+          toast({
+            title: 'Save Error',
+            description: 'Could not save your quiz result. Please try again.',
+            variant: 'destructive',
+          });
+        }
+      }
     }
   };
-
+  
   const handleNextQuestion = () => {
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
+
     if (isLastQuestion) {
       setAppState('results');
       return;
@@ -130,23 +120,26 @@ export default function QuizApp() {
     setCurrentQuestionIndex((prev) => prev + 1);
   };
 
-  const restartQuiz = (newTopic = false) => {
-    form.reset();
+  const resetQuizState = () => {
     setQuizData(null);
     setCurrentQuestionIndex(0);
     setScore(0);
     setSelectedAnswer(null);
     setIsAnswered(false);
-    
-    if (newTopic) {
-        setTopic('');
-        setDifficulty('Medium');
-        setAppState('topic');
-    } else {
-        // Retry the same quiz
-        handleTopicSubmit({ topic: topic, difficulty: difficulty });
-    }
+    setIsLoading(false);
+  }
+
+  const restartQuiz = () => {
+    resetQuizState();
+    handleTopicSubmit(quizParams);
   };
+
+  const startNewQuiz = () => {
+    resetQuizState();
+    form.reset();
+    setQuizParams({ topic: '', difficulty: 'Medium' });
+    setAppState('topic');
+  }
 
   const renderTopicSelector = () => (
     <Card className="w-full max-w-lg shadow-lg animate-in fade-in duration-500">
@@ -221,7 +214,7 @@ export default function QuizApp() {
     <div className="flex flex-col items-center justify-center gap-4 text-center animate-in fade-in duration-500">
       <Loader2 className="w-10 h-10 md:w-12 md:h-12 text-primary animate-spin" />
       <h2 className="text-xl md:text-2xl font-semibold">Generating your quiz...</h2>
-      <p className="text-muted-foreground max-w-sm">Please wait while we create a {difficulty.toLowerCase()} quiz on "{topic}".</p>
+      <p className="text-muted-foreground max-w-sm">Please wait while we create a {quizParams.difficulty.toLowerCase()} quiz on "{quizParams.topic}".</p>
     </div>
   );
 
@@ -346,14 +339,14 @@ export default function QuizApp() {
                     </svg>
                     <span className="absolute text-3xl md:text-4xl font-bold">{score}/{quizData!.questions.length}</span>
                 </div>
-                <p className="text-base md:text-lg">You scored {percentage}% on the "{topic}" ({difficulty}) quiz.</p>
+                <p className="text-base md:text-lg">You scored {percentage}% on the "{quizParams.topic}" ({quizParams.difficulty}) quiz.</p>
             </CardContent>
             <CardFooter className="flex flex-col sm:flex-row gap-2">
-                <Button variant="outline" className="w-full" onClick={() => restartQuiz(false)}>
+                <Button variant="outline" className="w-full" onClick={restartQuiz}>
                     <Repeat className="mr-2 h-4 w-4" />
                     Retry Quiz
                 </Button>
-                <Button className="w-full" onClick={() => restartQuiz(true)}>
+                <Button className="w-full" onClick={startNewQuiz}>
                     <Home className="mr-2 h-4 w-4" />
                     New Topic
                 </Button>

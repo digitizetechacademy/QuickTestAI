@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { getQuizHistory, type QuizResult } from '@/services/quiz-service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,29 +17,45 @@ import LoginPage from '@/components/login-page';
 import { usePathname } from 'next/navigation';
 import { Timestamp } from 'firebase/firestore';
 
+interface ClientQuizResult extends Omit<QuizResult, 'createdAt'> {
+    createdAt: string; 
+}
+
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
-  const [history, setHistory] = useState<QuizResult[]>([]);
+  const [history, setHistory] = useState<ClientQuizResult[]>([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
-  useEffect(() => {
+  const fetchHistory = useCallback(async () => {
     if (user) {
       setLoading(true);
-      getQuizHistory(user.uid)
-        .then((results) => {
-            const formattedHistory = results.map(r => ({
-                ...r,
-                createdAt: r.createdAt instanceof Timestamp ? r.createdAt.toDate() : new Date(),
-            }));
-            setHistory(formattedHistory as any);
-        })
-        .finally(() => setLoading(false));
-    } else if (!authLoading) {
-      setLoading(false);
+      try {
+        const results = await getQuizHistory(user.uid);
+        const formattedHistory = results.map(r => ({
+          ...r,
+          createdAt: r.createdAt instanceof Timestamp 
+            ? r.createdAt.toDate().toISOString()
+            : new Date(r.createdAt as any).toISOString(),
+        }));
+        setHistory(formattedHistory);
+      } catch (error) {
+        console.error("Failed to fetch quiz history:", error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+        setHistory([]);
+        setLoading(false);
     }
-  }, [user, authLoading, pathname]);
+  }, [user]);
 
+  useEffect(() => {
+    if (!authLoading) {
+      fetchHistory();
+    }
+  }, [user, authLoading, pathname, fetchHistory]);
+  
   if (authLoading || loading) {
     return <SplashScreen />;
   }
@@ -132,7 +148,7 @@ export default function HistoryPage() {
                             </div>
                           </TableCell>
                           <TableCell className="hidden md:table-cell text-right">
-                            {format(result.createdAt, 'PPp')}
+                            {format(new Date(result.createdAt), 'PPp')}
                           </TableCell>
                         </TableRow>
                       );
