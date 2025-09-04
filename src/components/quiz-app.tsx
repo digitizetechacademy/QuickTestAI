@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookOpen, BrainCircuit, CheckCircle, Home, Loader2, Repeat, XCircle } from 'lucide-react';
+import { BookOpen, BrainCircuit, CheckCircle, Home, Loader2, MoveRight, Repeat, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
@@ -114,24 +114,20 @@ export default function QuizApp() {
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
 
     if (isLastQuestion) {
-      // If it's the last question, finish the quiz immediately without a timeout.
-      finishQuiz(newScore).then(() => {
-        setAppState('results');
-      });
-    } else {
-      // For other questions, use a timeout to let the user see the result.
-      setTimeout(() => {
-        handleNextQuestion();
-      }, 1200);
+      finishQuiz(newScore);
     }
   };
 
   const handleNextQuestion = () => {
+    const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
+    if (isLastQuestion) {
+      setAppState('results');
+      return;
+    }
+
     setIsAnswered(false);
     setSelectedAnswer(null);
-    if (currentQuestionIndex < quizData!.questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
-    }
+    setCurrentQuestionIndex((prev) => prev + 1);
   };
 
   const restartQuiz = (newTopic = false) => {
@@ -284,7 +280,7 @@ export default function QuizApp() {
             ))}
           </CardContent>
           <CardFooter className="flex flex-col items-stretch">
-            {isAnswered && !isLastQuestion && (
+            {isAnswered && (
                 <div className="w-full p-4 mb-4 rounded-lg bg-secondary text-secondary-foreground animate-in fade-in duration-500">
                     <div className="flex items-start gap-3">
                         <BookOpen className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
@@ -295,9 +291,16 @@ export default function QuizApp() {
                     </div>
                 </div>
             )}
-            <Button onClick={handleAnswerSubmit} disabled={(selectedAnswer === null || (isAnswered && !isLastQuestion))}>
-              {isLastQuestion ? 'View Results' : 'Submit Answer'}
-            </Button>
+            {!isAnswered ? (
+              <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null}>
+                Submit Answer
+              </Button>
+            ) : (
+              <Button onClick={handleNextQuestion}>
+                {isLastQuestion ? 'View Results' : 'Next Question'}
+                {!isLastQuestion && <MoveRight className="ml-2" />}
+              </Button>
+            )}
           </CardFooter>
         </Card>
       </div>
