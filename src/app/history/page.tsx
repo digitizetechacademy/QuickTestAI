@@ -5,7 +5,7 @@ import { useAuth } from '@/context/auth-context';
 import { getQuizHistory, type QuizResult } from '@/services/quiz-service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, Loader2, Award } from 'lucide-react';
+import { Home, Award } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -14,11 +14,13 @@ import { cn } from '@/lib/utils';
 import MainLayout from '@/components/main-layout';
 import SplashScreen from '@/components/splash-screen';
 import LoginPage from '@/components/login-page';
+import { usePathname } from 'next/navigation';
 
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
   const [history, setHistory] = useState<QuizResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (user) {
@@ -28,7 +30,7 @@ export default function HistoryPage() {
     } else if (!authLoading) {
       setLoading(false);
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, pathname]);
 
   if (authLoading || loading) {
     return <SplashScreen />;

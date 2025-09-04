@@ -103,6 +103,7 @@ export default function QuizApp() {
             description: 'Your quiz result has been saved to your history.',
           });
         } catch (error) {
+          console.error('Save Error:', error);
           toast({
             title: 'Save Error',
             description: 'Could not save your quiz result. Please try again.',
@@ -127,7 +128,7 @@ export default function QuizApp() {
         setDifficulty('Medium');
         setAppState('topic');
     } else {
-        setAppState('loading');
+        // Retry the same quiz
         handleTopicSubmit({ topic: topic, difficulty: difficulty });
     }
   };
