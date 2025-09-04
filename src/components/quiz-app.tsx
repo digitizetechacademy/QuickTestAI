@@ -75,13 +75,15 @@ export default function QuizApp() {
 
     setIsAnswered(true);
     const correct = selectedAnswer === quizData!.questions[currentQuestionIndex].correctAnswerIndex;
-    if (correct) {
-        setScore((prev) => prev + 1);
-    }
     
+    if (correct) {
+      setScore((prev) => prev + 1);
+    }
+
     const isLastQuestion = currentQuestionIndex === quizData!.questions.length - 1;
     if (isLastQuestion) {
-        handleSaveResult();
+      const finalScore = correct ? score + 1 : score;
+      handleSaveResult(finalScore);
     }
   };
   
@@ -91,21 +93,22 @@ export default function QuizApp() {
     setCurrentQuestionIndex((prev) => prev + 1);
   };
 
-  const handleSaveResult = async () => {
+  const handleSaveResult = async (finalScore: number) => {
      if (user) {
         try {
             await saveQuizResult({
                 userId: user.uid,
                 topic: quizParams.topic,
                 difficulty: quizParams.difficulty,
-                score: score,
+                score: finalScore,
                 totalQuestions: quizData!.questions.length,
             });
             toast({
                 title: 'Quiz Saved',
                 description: 'Your quiz result has been saved to your history.',
             });
-            router.refresh(); 
+            router.refresh();
+            viewResults();
         } catch (error) {
             console.error('Save Error:', error);
             toast({
