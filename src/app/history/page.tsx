@@ -15,6 +15,7 @@ import MainLayout from '@/components/main-layout';
 import SplashScreen from '@/components/splash-screen';
 import LoginPage from '@/components/login-page';
 import { usePathname } from 'next/navigation';
+import { Timestamp } from 'firebase/firestore';
 
 export default function HistoryPage() {
   const { user, loading: authLoading } = useAuth();
@@ -124,7 +125,7 @@ export default function HistoryPage() {
                             </div>
                           </TableCell>
                           <TableCell className="hidden md:table-cell text-right">
-                            {format(result.createdAt, 'PPp')}
+                            {format(result.createdAt instanceof Timestamp ? result.createdAt.toDate() : result.createdAt, 'PPp')}
                           </TableCell>
                         </TableRow>
                       );

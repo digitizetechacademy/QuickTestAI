@@ -8,7 +8,7 @@ import { BookOpen, BrainCircuit, CheckCircle, Home, Loader2, Repeat, XCircle } f
 import { useRouter } from 'next/navigation';
 
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
-import { saveQuizResult } from '@/services/quiz-service';
+import { saveQuizResult, type SaveQuizResultInput } from '@/services/quiz-service';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,20 +84,21 @@ export default function QuizApp() {
   };
 
   const handleNextQuestion = async () => {
+    setIsAnswered(false);
+    setSelectedAnswer(null);
     if (currentQuestionIndex < quizData!.questions.length - 1) {
-      setIsAnswered(false);
-      setSelectedAnswer(null);
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
       if (user) {
         try {
-          await saveQuizResult({
+          const result: SaveQuizResultInput = {
             userId: user.uid,
             topic,
             difficulty,
             score,
             totalQuestions: quizData!.questions.length,
-          });
+          };
+          await saveQuizResult(result);
           toast({
             title: 'Quiz Saved',
             description: 'Your quiz result has been saved to your history.',
@@ -213,7 +214,7 @@ export default function QuizApp() {
   const renderQuiz = () => {
     if (!quizData) return null;
     const currentQuestion = quizData.questions[currentQuestionIndex];
-    const progress = ((currentQuestionIndex + 1) / quizData.questions.length) * 100;
+    const progress = ((currentQuestionIndex) / quizData.questions.length) * 100;
 
     const getOptionStyle = (index: number) => {
         if (!isAnswered) {

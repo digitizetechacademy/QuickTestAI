@@ -9,6 +9,7 @@ import {
   where,
   getDocs,
   orderBy,
+  Timestamp,
 } from 'firebase/firestore';
 
 export interface QuizResult {
@@ -21,15 +22,24 @@ export interface QuizResult {
   createdAt: Date;
 }
 
+export type SaveQuizResultInput = Omit<QuizResult, 'id' | 'createdAt'>;
+
 export async function saveQuizResult(
-  result: Omit<QuizResult, 'id' | 'createdAt'>
-) {
+  result: SaveQuizResultInput
+): Promise<QuizResult> {
   try {
-    const docRef = await addDoc(collection(db, 'quizResults'), {
+    const docData = {
       ...result,
       createdAt: serverTimestamp(),
-    });
-    return {id: docRef.id};
+    };
+    const docRef = await addDoc(collection(db, 'quizResults'), docData);
+
+    // The returned object will have the server-generated timestamp resolved to a Date
+    return {
+      ...result,
+      id: docRef.id,
+      createdAt: new Date(), // Approximate, client-side timestamp. Real value is on server.
+    };
   } catch (error) {
     console.error('Error saving quiz result:', error);
     throw new Error('Failed to save quiz result.');
@@ -40,7 +50,7 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
   if (!userId) {
     return [];
   }
-  
+
   try {
     const q = query(
       collection(db, 'quizResults'),
@@ -55,7 +65,7 @@ export async function getQuizHistory(userId: string): Promise<QuizResult[]> {
         id: doc.id,
         ...data,
         // Convert Firestore Timestamp to JS Date
-        createdAt: data.createdAt.toDate(),
+        createdAt: (data.createdAt as Timestamp).toDate(),
       } as QuizResult);
     });
     return history;
