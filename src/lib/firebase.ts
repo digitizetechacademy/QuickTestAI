@@ -11,6 +11,7 @@ const firebaseConfig = {
   apiKey: 'AIzaSyCHu5-LV3mTgFGEo3tO1gB5OWsYTiSIsuI',
   authDomain: 'quick-test-ai.firebaseapp.com',
   messagingSenderId: '495101905101',
+  measurementId: '',
 };
 
 // Initialize Firebase
