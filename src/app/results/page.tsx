@@ -5,7 +5,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ClipboardList, Loader2, Search, ExternalLink } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useAppToast } from '@/hooks/use-app-toast';
 import { generateExamResult, type GenerateExamResultOutput } from '@/ai/flows/generate-exam-result';
 import MainLayout from '@/components/main-layout';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ResultsPage() {
   const [result, setResult] = useState<GenerateExamResultOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const { toast } = useAppToast();
   const { t } = useTranslation();
 
   const form = useForm<FormValues>({
@@ -42,8 +42,8 @@ export default function ResultsPage() {
     } catch (error) {
       console.error(error);
       toast({
-        title: t('error_toast_title'),
-        description: t('results_error_description'),
+        title: 'error_toast_title',
+        description: 'results_error_description',
         variant: 'destructive',
       });
     } finally {

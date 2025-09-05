@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { BrainCircuit, Loader2 } from 'lucide-react';
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
-import { useToast } from '@/hooks/use-toast';
+import { useAppToast } from '@/hooks/use-app-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -31,7 +31,7 @@ export default function QuizApp() {
   const [quizParams, setQuizParams] = useState<FormValues | null>(null);
   const [finalScore, setFinalScore] = useState(0);
 
-  const { toast } = useToast();
+  const { toast } = useAppToast();
   const { t } = useTranslation();
 
   const form = useForm<FormValues>({
@@ -52,8 +52,8 @@ export default function QuizApp() {
     } catch (error) {
       console.error(error);
       toast({
-        title: t('quiz_error_title'),
-        description: t('quiz_error_description'),
+        title: 'quiz_error_title',
+        description: 'quiz_error_description',
         variant: 'destructive',
       });
       setAppState('topic');
