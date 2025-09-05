@@ -46,6 +46,46 @@ const jobs = [
     applyLink: '#',
     deadline: '2024-11-30',
   },
+  {
+    id: 6,
+    title: 'RBI Grade B Officer',
+    department: 'Reserve Bank of India',
+    description: 'A highly sought-after position for managing the country\'s financial and banking systems. Involves policy making and regulation.',
+    applyLink: '#',
+    deadline: '2024-12-01',
+  },
+  {
+    id: 7,
+    title: 'LIC AAO (Assistant Administrative Officer)',
+    department: 'Life Insurance Corporation of India',
+    description: 'A role focused on administrative duties within the largest insurance company in India, offering a stable and rewarding career path.',
+    applyLink: '#',
+    deadline: '2024-11-15',
+  },
+  {
+    id: 8,
+    title: 'ESIC UDC/MTS',
+    department: 'Employees\' State Insurance Corporation',
+    description: 'Recruitment for Upper Division Clerk and Multi-Tasking Staff roles to manage social security and health insurance for workers.',
+    applyLink: '#',
+    deadline: '2025-01-10',
+  },
+  {
+    id: 9,
+    title: 'FCI Manager',
+    department: 'Food Corporation of India',
+    description: 'Managerial roles responsible for overseeing the procurement, storage, and distribution of food grains across the country.',
+    applyLink: '#',
+    deadline: '2024-12-15',
+  },
+  {
+    id: 10,
+    title: 'DRDO MTS',
+    department: 'Defence Research & Development Organisation',
+    description: 'Multi-Tasking Staff positions supporting scientists and engineers in Indias premier defense research organization.',
+    applyLink: '#',
+    deadline: '2025-03-05',
+  },
 ];
 
 export default function JobsPage() {
@@ -53,9 +93,9 @@ export default function JobsPage() {
     <MainLayout>
       <div className="container mx-auto py-8">
         <div className="mb-8 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold">Latest Government Job Openings</h1>
+            <h1 className="text-3xl md:text-4xl font-bold">Top 10 Latest Government Job Openings</h1>
             <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                This section highlights some of the latest major government job opportunities in India. The list is updated periodically to reflect current openings.
+                This section highlights the top 10 latest major government job opportunities in India. The list is updated periodically to reflect current openings.
             </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
