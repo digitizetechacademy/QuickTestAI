@@ -46,14 +46,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/library'}>
-                <Link href="/library">
-                  <Book />
-                  <span>Library</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === '/jobs'}>
                 <Link href="/jobs">
                   <Briefcase />
@@ -68,6 +60,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         <span>Current Affairs</span>
                     </Link>
                 </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/library'}>
+                <Link href="/library">
+                  <Book />
+                  <span>Library</span>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === '/'}>
