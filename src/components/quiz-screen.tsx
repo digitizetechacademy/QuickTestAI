@@ -33,13 +33,15 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
     const isCorrect = selectedAnswer === currentQuestion.correctAnswerIndex;
     let updatedScore = score;
     if (isCorrect) {
-      updatedScore = score + 1;
+      updatedScore++;
       setScore(updatedScore);
     }
     
     setIsAnswered(true);
 
     if (isLastQuestion) {
+      // Pass the updated score directly to the finish handler
+      // to avoid issues with state update timing.
       onQuizFinish(updatedScore);
     }
   };
