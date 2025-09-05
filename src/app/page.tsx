@@ -19,9 +19,7 @@ export default function Home() {
 
   return (
     <MainLayout>
-      <div className="space-y-8">
-        <QuizApp />
-      </div>
+      <QuizApp />
     </MainLayout>
   );
 }
