@@ -4,93 +4,57 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarTrigger,
-  SidebarInset,
-} from '@/components/ui/sidebar';
-import { BrainCircuit, PanelLeft, Briefcase, Home, Book, Newspaper, ClipboardList } from 'lucide-react';
-import { Button } from './ui/button';
+  BrainCircuit,
+  Briefcase,
+  Home,
+  Book,
+  Newspaper,
+  ClipboardList,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const navItems = [
+  { href: '/jobs', icon: Briefcase, label: 'Jobs' },
+  { href: '/current-affairs', icon: Newspaper, label: 'Affairs' },
+  { href: '/', icon: Home, label: 'Quiz' },
+  { href: '/library', icon: Book, label: 'Library' },
+  { href: '/results', icon: ClipboardList, label: 'Results' },
+];
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/">
-                <BrainCircuit className="w-6 h-6 text-primary" />
-              </Link>
-            </Button>
-            <h1 className="text-lg font-semibold">Quick Test AI</h1>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/jobs'}>
-                <Link href="/jobs">
-                  <Briefcase />
-                  <span>Upcoming Jobs</span>
+    <div className="flex flex-col min-h-screen">
+      <header className="flex h-16 items-center justify-between border-b bg-background/95 px-4 backdrop-blur-sm sticky top-0 z-10">
+        <Link href="/" className="flex items-center gap-2 font-semibold">
+          <BrainCircuit className="h-6 w-6 text-primary" />
+          <span className="">Quick Test AI</span>
+        </Link>
+      </header>
+      <main className="flex-1 p-4 sm:p-6 pb-24">{children}</main>
+      <footer className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background/95 backdrop-blur-sm z-10">
+        <nav className="h-full">
+          <ul className="grid h-full grid-cols-5">
+            {navItems.map((item) => (
+              <li key={item.href} className="h-full">
+                <Link
+                  href={item.href}
+                  className={cn(
+                    'flex h-full flex-col items-center justify-center gap-1 text-xs font-medium transition-colors',
+                    pathname === item.href
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-primary'
+                  )}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span>{item.label}</span>
                 </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === '/current-affairs'}>
-                    <Link href="/current-affairs">
-                        <Newspaper />
-                        <span>Current Affairs</span>
-                    </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/library'}>
-                <Link href="/library">
-                  <Book />
-                  <span>Library</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/results'}>
-                <Link href="/results">
-                  <ClipboardList />
-                  <span>Result & Cutoff</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/'}>
-                <Link href="/">
-                  <Home />
-                  <span>Quiz</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarContent>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex h-14 items-center justify-between border-b bg-background/95 px-4 backdrop-blur-sm md:hidden">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-                <BrainCircuit className="h-6 w-6 text-primary" />
-                <span className="">Quick Test AI</span>
-            </Link>
-            <SidebarTrigger>
-                <PanelLeft />
-                <span className="sr-only">Toggle Menu</span>
-            </SidebarTrigger>
-        </header>
-        <main className="flex-1 p-4 sm:p-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </footer>
+    </div>
   );
 }
