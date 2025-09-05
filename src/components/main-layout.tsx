@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './theme-toggle';
+import { LanguageToggle } from './language-toggle';
 
 const navItems = [
   { href: '/jobs', icon: Briefcase, label: 'Jobs' },
@@ -32,7 +33,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           <BrainCircuit className="h-6 w-6 text-primary" />
           <span className="">Quick Test AI</span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <ThemeToggle />
+        </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 pb-24">{children}</main>
       <footer className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background/95 backdrop-blur-sm z-10">
