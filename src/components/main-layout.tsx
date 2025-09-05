@@ -73,7 +73,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               <SidebarMenuButton asChild isActive={pathname === '/'}>
                 <Link href="/">
                   <Home />
-                  <span>New Quiz</span>
+                  <span>Quiz</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
