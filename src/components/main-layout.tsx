@@ -42,7 +42,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 pb-24">{children}</main>
-      <footer className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background/95 backdrop-blur-sm z-10">
+      <footer className="fixed bottom-0 left-0 right-0 h-16 border-t border-primary/20 bg-primary text-primary-foreground z-10">
         <nav className="h-full">
           <ul className="grid h-full grid-cols-5">
             {navItems.map((item) => (
@@ -52,8 +52,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   className={cn(
                     'flex h-full flex-col items-center justify-center gap-1 text-xs font-medium transition-colors',
                     pathname === item.href
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-primary'
+                      ? 'opacity-100'
+                      : 'opacity-70 hover:opacity-100'
                   )}
                 >
                   <item.icon className="w-5 h-5" />
