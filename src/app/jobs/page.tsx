@@ -11,7 +11,7 @@ const jobs = [
     title: 'SSC CGL (Combined Graduate Level)',
     department: 'Staff Selection Commission',
     description: 'A major exam for recruitment to various Group B and C posts in ministries and departments of the Government of India.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=SSC+CGL+recruitment',
     deadline: '2024-10-24',
   },
   {
@@ -19,7 +19,7 @@ const jobs = [
     title: 'UPSC Civil Services',
     department: 'Union Public Service Commission',
     description: 'The premier exam for recruitment to top civil services like IAS, IPS, and IFS. A highly competitive and prestigious opportunity.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=UPSC+Civil+Services+recruitment',
     deadline: '2025-02-15',
   },
   {
@@ -27,7 +27,7 @@ const jobs = [
     title: 'IBPS PO (Probationary Officer)',
     department: 'Institute of Banking Personnel Selection',
     description: 'A common written exam for the recruitment of Probationary Officers in multiple public sector banks across India.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=IBPS+PO+recruitment',
     deadline: '2024-11-05',
   },
   {
@@ -35,7 +35,7 @@ const jobs = [
     title: 'RRB NTPC (Non-Technical Popular Categories)',
     department: 'Railway Recruitment Board',
     description: 'Recruitment for various non-technical posts in the Indian Railways, including roles like clerk, time keeper, and station master.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=RRB+NTPC+recruitment',
     deadline: '2024-12-20',
   },
     {
@@ -43,7 +43,7 @@ const jobs = [
     title: 'State PSC (Public Service Commission)',
     department: 'Various State Governments',
     description: 'Each state conducts its own civil service exams for recruitment to administrative positions within the state government.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=State+Public+Service+Commission+exams',
     deadline: '2024-11-30',
   },
   {
@@ -51,7 +51,7 @@ const jobs = [
     title: 'RBI Grade B Officer',
     department: 'Reserve Bank of India',
     description: 'A highly sought-after position for managing the country\'s financial and banking systems. Involves policy making and regulation.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=RBI+Grade+B+Officer+recruitment',
     deadline: '2024-12-01',
   },
   {
@@ -59,7 +59,7 @@ const jobs = [
     title: 'LIC AAO (Assistant Administrative Officer)',
     department: 'Life Insurance Corporation of India',
     description: 'A role focused on administrative duties within the largest insurance company in India, offering a stable and rewarding career path.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=LIC+AAO+recruitment',
     deadline: '2024-11-15',
   },
   {
@@ -67,7 +67,7 @@ const jobs = [
     title: 'ESIC UDC/MTS',
     department: 'Employees\' State Insurance Corporation',
     description: 'Recruitment for Upper Division Clerk and Multi-Tasking Staff roles to manage social security and health insurance for workers.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=ESIC+UDC+MTS+recruitment',
     deadline: '2025-01-10',
   },
   {
@@ -75,7 +75,7 @@ const jobs = [
     title: 'FCI Manager',
     department: 'Food Corporation of India',
     description: 'Managerial roles responsible for overseeing the procurement, storage, and distribution of food grains across the country.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=FCI+Manager+recruitment',
     deadline: '2024-12-15',
   },
   {
@@ -83,7 +83,7 @@ const jobs = [
     title: 'DRDO MTS',
     department: 'Defence Research & Development Organisation',
     description: 'Multi-Tasking Staff positions supporting scientists and engineers in Indias premier defense research organization.',
-    applyLink: '#',
+    applyLink: 'https://www.google.com/search?q=DRDO+MTS+recruitment',
     deadline: '2025-03-05',
   },
 ];
