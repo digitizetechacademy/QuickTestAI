@@ -6,10 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { BrainCircuit, Loader2 } from 'lucide-react';
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
-import { saveQuizResult } from '@/services/quiz-service';
 import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -35,7 +33,6 @@ export default function QuizApp() {
 
   const { toast } = useToast();
   const { user } = useAuth();
-  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -65,29 +62,6 @@ export default function QuizApp() {
 
   const handleQuizFinish = async (score: number) => {
     setFinalScore(score);
-    if (user && quizParams && quizData) {
-      try {
-        await saveQuizResult({
-          userId: user.uid,
-          topic: quizParams.topic,
-          difficulty: quizParams.difficulty,
-          score: score,
-          totalQuestions: quizData.questions.length,
-        });
-        toast({
-          title: 'Quiz Saved',
-          description: 'Your quiz result has been saved to your history.',
-        });
-        router.refresh();
-      } catch (error) {
-        console.error('Save Error:', error);
-        toast({
-          title: 'Save Error',
-          description: 'Could not save your quiz result. Please try again.',
-          variant: 'destructive',
-        });
-      }
-    }
     setAppState('results');
   };
 
