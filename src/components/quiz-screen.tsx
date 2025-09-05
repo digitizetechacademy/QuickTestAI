@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface QuizScreenProps {
   quizData: GenerateMCQQuizOutput;
@@ -19,6 +20,7 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const { t } = useTranslation();
 
   const currentQuestion = useMemo(
     () => quizData.questions[currentQuestionIndex],
@@ -67,8 +69,8 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
     <div className="w-full max-w-2xl" key={currentQuestionIndex}>
       <div className="mb-4 animate-in fade-in duration-500">
         <div className="flex justify-between items-center mb-2 text-sm text-muted-foreground">
-          <span>Question {currentQuestionIndex + 1} of {quizData.questions.length}</span>
-          <span>Score: {score}</span>
+          <span>{t('quiz_question_progress', { current: currentQuestionIndex + 1, total: quizData.questions.length })}</span>
+          <span>{t('quiz_score', { score: score })}</span>
         </div>
         <Progress value={progress} />
       </div>
@@ -102,7 +104,7 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
               <div className="flex items-start gap-3">
                 <BookOpen className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
                 <div>
-                  <h4 className="font-bold">Explanation</h4>
+                  <h4 className="font-bold">{t('quiz_explanation_title')}</h4>
                   <p className="text-sm">{currentQuestion.explanation}</p>
                 </div>
               </div>
@@ -110,12 +112,12 @@ export default function QuizScreen({ quizData, onQuizFinish }: QuizScreenProps) 
           )}
           {isAnswered ? (
              <Button onClick={handleNext} disabled={isLastQuestion}>
-                Next Question
+                {t('quiz_next_button')}
                 <MoveRight className="ml-2" />
             </Button>
           ) : (
             <Button onClick={handleAnswerSubmit} disabled={selectedAnswer === null}>
-              Submit Answer
+              {t('quiz_submit_button')}
             </Button>
           )}
         </CardFooter>

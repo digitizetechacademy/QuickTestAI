@@ -14,24 +14,27 @@ import {
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './theme-toggle';
 import { LanguageToggle } from './language-toggle';
+import { useTranslation } from '@/hooks/use-translation';
+
 
 const navItems = [
-  { href: '/jobs', icon: Briefcase, label: 'Jobs' },
-  { href: '/current-affairs', icon: Newspaper, label: 'Affairs' },
-  { href: '/', icon: Home, label: 'Quiz' },
-  { href: '/library', icon: Book, label: 'Library' },
-  { href: '/results', icon: ClipboardList, label: 'Results' },
+  { href: '/jobs', icon: Briefcase, labelKey: 'nav_jobs' },
+  { href: '/current-affairs', icon: Newspaper, labelKey: 'nav_affairs' },
+  { href: '/', icon: Home, labelKey: 'nav_quiz' },
+  { href: '/library', icon: Book, labelKey: 'nav_library' },
+  { href: '/results', icon: ClipboardList, labelKey: 'nav_results' },
 ];
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex h-16 items-center justify-between border-b bg-background/95 px-4 backdrop-blur-sm sticky top-0 z-10">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <BrainCircuit className="h-6 w-6 text-primary" />
-          <span className="">Quick Test AI</span>
+          <span className="">{t('app_title')}</span>
         </Link>
         <div className="flex items-center gap-2">
           <LanguageToggle />
@@ -54,7 +57,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   )}
                 >
                   <item.icon className="w-5 h-5" />
-                  <span>{item.label}</span>
+                  <span>{t(item.labelKey)}</span>
                 </Link>
               </li>
             ))}

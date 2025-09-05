@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/hooks/use-translation';
 
 const formSchema = z.object({
   topic: z.string().min(3, 'Topic must be at least 3 characters long.'),
@@ -24,6 +25,7 @@ export default function LibraryPage() {
   const [explanation, setExplanation] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -39,8 +41,8 @@ export default function LibraryPage() {
     } catch (error) {
       console.error(error);
       toast({
-        title: 'Error',
-        description: 'Failed to get explanation. Please try again.',
+        title: t('error_toast_title'),
+        description: t('library_error_description'),
         variant: 'destructive',
       });
     } finally {
@@ -55,10 +57,10 @@ export default function LibraryPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Book />
-              AI-Powered Library
+              {t('library_page_title')}
             </CardTitle>
             <CardDescription>
-              Enter any topic or subject to get a detailed explanation from our AI tutor.
+              {t('library_page_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -73,7 +75,7 @@ export default function LibraryPage() {
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <Input
-                            placeholder="e.g., 'Quantum Physics' or 'The History of the Internet'"
+                            placeholder={t('library_search_placeholder')}
                             {...field}
                             className="pl-10"
                           />
@@ -84,7 +86,7 @@ export default function LibraryPage() {
                   )}
                 />
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="animate-spin" /> : 'Search'}
+                  {isLoading ? <Loader2 className="animate-spin" /> : t('search_button')}
                 </Button>
               </form>
             </Form>

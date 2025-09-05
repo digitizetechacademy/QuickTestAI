@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Link from 'next/link';
+import { useTranslation } from '@/hooks/use-translation';
 
 const formSchema = z.object({
   examName: z.string().min(5, 'Exam name must be at least 5 characters long.'),
@@ -25,6 +26,7 @@ export default function ResultsPage() {
   const [result, setResult] = useState<GenerateExamResultOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -40,8 +42,8 @@ export default function ResultsPage() {
     } catch (error) {
       console.error(error);
       toast({
-        title: 'Error',
-        description: 'Failed to get results. The information may not be available yet. Please try again with a more specific query.',
+        title: t('error_toast_title'),
+        description: t('results_error_description'),
         variant: 'destructive',
       });
     } finally {
@@ -56,10 +58,10 @@ export default function ResultsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <ClipboardList />
-              Exam Results & Cutoffs
+              {t('results_page_title')}
             </CardTitle>
             <CardDescription>
-              Enter the name of an exam to get the latest results and cutoff marks from our AI assistant.
+              {t('results_page_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -74,7 +76,7 @@ export default function ResultsPage() {
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <Input
-                            placeholder="e.g., 'SSC CGL 2023 Tier 1' or 'UPSC Prelims 2024'"
+                            placeholder={t('results_search_placeholder')}
                             {...field}
                             className="pl-10"
                           />
@@ -85,7 +87,7 @@ export default function ResultsPage() {
                   )}
                 />
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading ? <Loader2 className="animate-spin" /> : 'Search'}
+                  {isLoading ? <Loader2 className="animate-spin" /> : t('search_button')}
                 </Button>
               </form>
             </Form>
@@ -113,13 +115,13 @@ export default function ResultsPage() {
               <CardDescription>{result.resultSummary}</CardDescription>
             </CardHeader>
             <CardContent>
-              <h4 className="font-semibold mb-2">Cutoff Marks</h4>
+              <h4 className="font-semibold mb-2">{t('results_cutoff_title')}</h4>
                 {result.cutoffMarks.length > 0 ? (
                     <Table>
                         <TableHeader>
                         <TableRow>
-                            <TableHead>Category</TableHead>
-                            <TableHead className="text-right">Marks</TableHead>
+                            <TableHead>{t('results_table_category')}</TableHead>
+                            <TableHead className="text-right">{t('results_table_marks')}</TableHead>
                         </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -132,13 +134,13 @@ export default function ResultsPage() {
                         </TableBody>
                     </Table>
                 ) : (
-                    <p className="text-sm text-muted-foreground">Cutoff marks are not available.</p>
+                    <p className="text-sm text-muted-foreground">{t('results_no_cutoffs')}</p>
                 )}
             </CardContent>
             <CardFooter>
                 <Button asChild>
                   <Link href={result.officialLink} target="_blank">
-                    View Official Source
+                    {t('results_view_source')}
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
