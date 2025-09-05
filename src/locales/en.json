@@ -1,3 +1,4 @@
+
 {
     "app_title": "Quick Test AI",
     
@@ -112,5 +113,7 @@
     "results_no_cutoffs": "Cutoff marks are not available.",
     "results_view_source": "View Official Source",
     
-    "error_toast_title": "Error"
+    "error_toast_title": "Error",
+    "quiz_error_title": "Quiz Generation Failed",
+    "quiz_error_description": "The AI could not generate a quiz for this topic. Please try a different one."
 }

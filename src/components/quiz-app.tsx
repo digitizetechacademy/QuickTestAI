@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -52,8 +53,8 @@ export default function QuizApp() {
     } catch (error) {
       console.error(error);
       toast({
-        title: 'quiz_error_title',
-        description: 'quiz_error_description',
+        title: t('quiz_error_title'),
+        description: t('quiz_error_description'),
         variant: 'destructive',
       });
       setAppState('topic');

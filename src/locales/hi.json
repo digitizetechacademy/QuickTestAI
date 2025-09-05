@@ -1,3 +1,4 @@
+
 {
     "app_title": "क्विक टेस्ट एआई",
 
@@ -112,5 +113,7 @@
     "results_no_cutoffs": "कटऑफ अंक उपलब्ध नहीं हैं।",
     "results_view_source": "आधिकारिक स्रोत देखें",
 
-    "error_toast_title": "त्रुटि"
+    "error_toast_title": "त्रुटि",
+    "quiz_error_title": "क्विज़ बनाने में विफल",
+    "quiz_error_description": "एआई इस विषय के लिए क्विज़ नहीं बना सका। कृपया कोई दूसरा प्रयास करें।"
 }

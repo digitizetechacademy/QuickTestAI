@@ -41,8 +41,8 @@ export default function LibraryPage() {
     } catch (error) {
       console.error(error);
       toast({
-        title: 'error_toast_title',
-        description: 'library_error_description',
+        title: t('error_toast_title'),
+        description: t('library_error_description'),
         variant: 'destructive',
       });
     } finally {

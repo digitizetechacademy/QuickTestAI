@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -42,8 +43,8 @@ export default function ResultsPage() {
     } catch (error) {
       console.error(error);
       toast({
-        title: 'error_toast_title',
-        description: 'results_error_description',
+        title: t('error_toast_title'),
+        description: t('results_error_description'),
         variant: 'destructive',
       });
     } finally {
