@@ -25,7 +25,7 @@ const GenerateCurrentAffairsOutputSchema = z.object({
       details: z.string().describe('A brief summary of the event.'),
       category: z.string().describe('The category of the event (e.g., Politics, Technology, Sports).'),
     })
-  ).describe('An array of 5 major current affairs summaries for the given month and year, covering national and international events relevant to India.'),
+  ).describe('An array of 20 major current affairs summaries for the given month and year, covering national and international events relevant to India.'),
 });
 export type GenerateCurrentAffairsOutput = z.infer<typeof GenerateCurrentAffairsOutputSchema>;
 
@@ -37,7 +37,7 @@ const generateCurrentAffairsPrompt = ai.definePrompt({
   name: 'generateCurrentAffairsPrompt',
   input: {schema: GenerateCurrentAffairsInputSchema},
   output: {schema: GenerateCurrentAffairsOutputSchema},
-  prompt: `You are a world-class news analyst. Generate a summary of the top 5 most significant national and international current events for {{{month}}} {{{year}}}.
+  prompt: `You are a world-class news analyst. Generate a summary of the top 20 most significant national and international current events for {{{month}}} {{{year}}}.
 
 Focus on events that are most relevant to a general audience in India. For each event, provide a concise title, a brief summary (details), and a category.
 `,

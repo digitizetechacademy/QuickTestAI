@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { format, subMonths } from 'date-fns';
+import { format, getMonth, getYear, subMonths, differenceInMonths } from 'date-fns';
 import { generateCurrentAffairs, type GenerateCurrentAffairsOutput } from '@/ai/flows/generate-current-affairs';
 import MainLayout from '@/components/main-layout';
 import {
@@ -39,14 +39,26 @@ const getCategoryColor = (category: string) => {
 export default function CurrentAffairsPage() {
     const [monthlyData, setMonthlyData] = useState<MonthData[]>([]);
     const [loading, setLoading] = useState(true);
+    const [numberOfMonths, setNumberOfMonths] = useState(0);
 
     useEffect(() => {
         const fetchAffairs = async () => {
             setLoading(true);
             const today = new Date();
+            const start = new Date(2025, 0); // January 2025
+            
+            // Only fetch if today is in or after Jan 2025
+            if (today < start) {
+                setLoading(false);
+                return;
+            }
+
+            const totalMonths = differenceInMonths(today, start) + 1;
+            setNumberOfMonths(totalMonths);
+
             const monthPromises: Promise<MonthData>[] = [];
 
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < totalMonths; i++) {
                 const date = subMonths(today, i);
                 const month = format(date, 'MMMM');
                 const year = date.getFullYear();
@@ -76,7 +88,7 @@ export default function CurrentAffairsPage() {
         if (loading) {
             return (
                 <Accordion type="single" collapsible defaultValue="item-0">
-                    {[...Array(3)].map((_, index) => (
+                    {[...Array(Math.min(numberOfMonths, 12) || 3)].map((_, index) => (
                         <AccordionItem value={`item-${index}`} key={index}>
                             <AccordionTrigger className="text-xl font-semibold">
                                 <Skeleton className="h-7 w-48" />
@@ -96,6 +108,14 @@ export default function CurrentAffairsPage() {
                     ))}
                 </Accordion>
             );
+        }
+
+        if (monthlyData.length === 0) {
+            return (
+                <div className="text-center py-10">
+                    <p className="text-muted-foreground">Current affairs data will be available starting January 2025.</p>
+                </div>
+            )
         }
 
         return (
