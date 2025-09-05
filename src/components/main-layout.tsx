@@ -31,9 +31,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="flex h-16 items-center justify-between border-b bg-background/95 px-4 backdrop-blur-sm sticky top-0 z-10">
+      <header className="flex h-16 items-center justify-between border-b bg-gradient-to-r from-primary to-accent px-4 sticky top-0 z-10 text-primary-foreground">
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <BrainCircuit className="h-6 w-6 text-primary" />
+          <BrainCircuit className="h-6 w-6" />
           <span className="">{t('app_title')}</span>
         </Link>
         <div className="flex items-center gap-2">
