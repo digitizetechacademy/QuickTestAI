@@ -18,9 +18,9 @@ import { useTranslation } from '@/hooks/use-translation';
 
 
 const navItems = [
-  { href: '/jobs', icon: Briefcase, labelKey: 'nav_jobs' },
+  { href: '/', icon: Briefcase, labelKey: 'nav_jobs' },
   { href: '/current-affairs', icon: Newspaper, labelKey: 'nav_affairs' },
-  { href: '/', icon: Home, labelKey: 'nav_quiz' },
+  { href: '/quiz', icon: Home, labelKey: 'nav_quiz' },
   { href: '/library', icon: Book, labelKey: 'nav_library' },
   { href: '/results', icon: ClipboardList, labelKey: 'nav_results' },
 ];
