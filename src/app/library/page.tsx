@@ -6,7 +6,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Book, Loader2, Search } from 'lucide-react';
-import { useAppToast } from '@/hooks/use-app-toast';
+import { useToast } from '@/hooks/use-toast';
 import { generateExplanation } from '@/ai/flows/generate-explanation';
 import MainLayout from '@/components/main-layout';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function LibraryPage() {
   const [explanation, setExplanation] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useAppToast();
+  const { toast } = useToast();
   const { t } = useTranslation();
 
   const form = useForm<FormValues>({
