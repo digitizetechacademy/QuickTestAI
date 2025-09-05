@@ -57,19 +57,7 @@ export default function QuizHistory() {
       );
     }
 
-    if (error) {
-        return (
-            <div className="text-center py-10 text-destructive">
-              <AlertTriangle className="mx-auto h-12 w-12" />
-              <h3 className="mt-4 text-lg font-semibold">Connection Error</h3>
-              <p className="mt-2 text-sm">
-                {error}
-              </p>
-            </div>
-        )
-    }
-
-    if (history.length === 0) {
+    if (error || history.length === 0) {
       return (
         <div className="text-center py-10">
           <Award className="mx-auto h-12 w-12 text-muted-foreground" />
