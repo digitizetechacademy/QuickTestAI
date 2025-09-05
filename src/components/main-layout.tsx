@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { BrainCircuit, PanelLeft, Briefcase, Home, Book, Newspaper } from 'lucide-react';
+import { BrainCircuit, PanelLeft, Briefcase, Home, Book, Newspaper, ClipboardList } from 'lucide-react';
 import { Button } from './ui/button';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
@@ -56,6 +56,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/library">
                   <Book />
                   <span>Library</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/results'}>
+                <Link href="/results">
+                  <ClipboardList />
+                  <span>Result & Cutoff</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
