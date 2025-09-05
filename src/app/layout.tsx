@@ -1,3 +1,4 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -5,7 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { LanguageProvider } from '@/context/language-context';
 
 export const metadata: Metadata = {
-  title: 'Quick Test AI',
+  title: 'Aspirant AI',
   description: 'Generate quizzes on any topic with AI',
 };
 

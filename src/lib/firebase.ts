@@ -5,11 +5,11 @@ import {getFirestore} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  projectId: 'quick-test-ai',
+  projectId: 'aspirant-ai',
   appId: '1:495101905101:web:2d3a812d15b9909fa08184',
-  storageBucket: 'quick-test-ai.firebasestorage.app',
+  storageBucket: 'aspirant-ai.firebasestorage.app',
   apiKey: 'AIzaSyCHu5-LV3mTgFGEo3tO1gB5OWsYTiSIsuI',
-  authDomain: 'quick-test-ai.firebaseapp.com',
+  authDomain: 'aspirant-ai.firebaseapp.com',
   messagingSenderId: '495101905101',
   measurementId: '',
 };
