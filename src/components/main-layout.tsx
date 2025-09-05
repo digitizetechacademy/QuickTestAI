@@ -2,10 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/context/auth-context';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -14,21 +11,14 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter,
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { BrainCircuit, LogOut, PanelLeft, Briefcase, Home, Book, Newspaper } from 'lucide-react';
+import { BrainCircuit, PanelLeft, Briefcase, Home, Book, Newspaper } from 'lucide-react';
+import { Button } from './ui/button';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await logout();
-    router.push('/');
-  };
 
   return (
     <SidebarProvider>
@@ -79,33 +69,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
-        <SidebarFooter>
-          <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src={user?.photoURL || undefined} alt="User" />
-              <AvatarFallback>
-                {user?.displayName?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col overflow-hidden">
-                <span className="text-sm font-medium truncate">
-                {user?.displayName || 'User'}
-                </span>
-                <span className="text-xs text-muted-foreground truncate">
-                    {user?.email || ''}
-                </span>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto"
-              onClick={handleLogout}
-              title="Logout"
-            >
-              <LogOut />
-            </Button>
-          </div>
-        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="flex h-14 items-center justify-between border-b bg-background/95 px-4 backdrop-blur-sm md:hidden">

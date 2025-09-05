@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { BrainCircuit, Loader2 } from 'lucide-react';
 import { generateMCQQuiz, type GenerateMCQQuizOutput } from '@/ai/flows/generate-mcq-quiz';
-import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -32,7 +31,6 @@ export default function QuizApp() {
   const [finalScore, setFinalScore] = useState(0);
 
   const { toast } = useToast();
-  const { user } = useAuth();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -60,7 +58,7 @@ export default function QuizApp() {
     }
   };
 
-  const handleQuizFinish = async (score: number) => {
+  const handleQuizFinish = (score: number) => {
     setFinalScore(score);
     setAppState('results');
   };

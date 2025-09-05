@@ -21,7 +21,8 @@ export interface Reading {
   createdAt: string; 
 }
 
-export type SaveReadingInput = Omit<Reading, 'id' | 'createdAt'>;
+export type SaveReadingInput = Omit<Reading, 'id' | 'createdAt' | 'userId'> & { userId?: string };
+
 
 export async function saveReading(reading: SaveReadingInput): Promise<string> {
   try {
