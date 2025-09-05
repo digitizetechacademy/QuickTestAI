@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -45,14 +46,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/'}>
-                <Link href="/">
-                  <Home />
-                  <span>New Quiz</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname === '/library'}>
                 <Link href="/library">
                   <Book />
@@ -75,6 +68,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         <span>Current Affairs</span>
                     </Link>
                 </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/'}>
+                <Link href="/">
+                  <Home />
+                  <span>New Quiz</span>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
