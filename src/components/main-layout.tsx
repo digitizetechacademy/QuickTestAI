@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import {
   BrainCircuit,
   Briefcase,
-  Home,
   Book,
   Newspaper,
   ClipboardList,
@@ -20,7 +19,7 @@ import { useTranslation } from '@/hooks/use-translation';
 const navItems = [
   { href: '/', icon: Briefcase, labelKey: 'nav_jobs' },
   { href: '/current-affairs', icon: Newspaper, labelKey: 'nav_affairs' },
-  { href: '/quiz', icon: Home, labelKey: 'nav_quiz' },
+  { href: '/quiz', icon: BrainCircuit, labelKey: 'nav_quiz' },
   { href: '/library', icon: Book, labelKey: 'nav_library' },
   { href: '/results', icon: ClipboardList, labelKey: 'nav_results' },
 ];
