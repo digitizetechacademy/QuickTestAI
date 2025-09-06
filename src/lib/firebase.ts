@@ -5,14 +5,15 @@ import {getFirestore} from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  projectId: 'aspirant-ai',
-  appId: '1:495101905101:web:2d3a812d15b9909fa08184',
-  storageBucket: 'aspirant-ai.firebasestorage.app',
-  apiKey: 'AIzaSyCHu5-LV3mTgFGEo3tO1gB5OWsYTiSIsuI',
-  authDomain: 'aspirant-ai.firebaseapp.com',
-  messagingSenderId: '495101905101',
-  measurementId: '',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
+
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
