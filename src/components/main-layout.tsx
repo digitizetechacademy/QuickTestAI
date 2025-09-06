@@ -31,9 +31,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="flex h-16 items-center justify-between border-b bg-gradient-to-r from-primary to-accent px-4 sticky top-0 z-10 text-primary-foreground">
+      <header className="flex h-16 items-center justify-between border-b px-4 sticky top-0 z-10 bg-background/95 backdrop-blur-sm">
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <BrainCircuit className="h-6 w-6" />
+          <BrainCircuit className="h-6 w-6 text-primary" />
           <span className="">{t('app_title')}</span>
         </Link>
         <div className="flex items-center gap-2">
@@ -42,7 +42,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 pb-24">{children}</main>
-      <footer className="fixed bottom-0 left-0 right-0 h-16 border-t border-primary/20 bg-primary text-primary-foreground z-10">
+      <footer className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background/95 backdrop-blur-sm z-10">
         <nav className="h-full">
           <ul className="grid h-full grid-cols-5">
             {navItems.map((item) => (
@@ -52,8 +52,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                   className={cn(
                     'flex h-full flex-col items-center justify-center gap-1 text-xs font-medium transition-colors',
                     pathname === item.href
-                      ? 'opacity-100'
-                      : 'opacity-70 hover:opacity-100'
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-primary'
                   )}
                 >
                   <item.icon className="w-5 h-5" />
